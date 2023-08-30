@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="template_open_child_catalogue_quotation" model="ir.actions.act_window">
+            <field name="domain">[('catalogue_request_id', '=', active_id)]</field>
+            <field name="name">Catalogue Quotations</field>
+            <field name="res_model">sale.order.catalogue_quotations</field>
+        </record>
+
+        <record id="addis_systems_catalogue_request_form_view" model="ir.ui.view">
+            <field name="name">addis_systems_catalogue_and_order_exchange.sale_order_catalogue_request.form.view</field>
+            <field name="model">sale.order.catalogue_request</field>
+            <field name="arch" type="xml">
+                <form string="Catalogue Request">
+                    <header>
+                        <button name="action_create_catalogue_quotation" string="Create Quotation"
+                                attrs="{'invisible': [('child_catalogue_quotation_count', '!=', 0)]}"
+                                type="object" class="oe_highlight" data-hotkey="w" title="Create Quotation"/>
+                        <field name="state" widget="statusbar" statusbar_visible="new,quoted,sent"/>
+                    </header>
+                    <sheet>
+                        <widget name="web_ribbon" title="Quoted" bg_color="bg-info" attrs="{'invisible': [('state', '!=', 'quoted')]}"/>
+                        <widget name="web_ribbon" title="Sent" attrs="{'invisible': [('state', '!=', 'sent')]}"/>
+                        <div class="oe_button_box" name="button_box">
+                            <button class="oe_stat_button" name="%(template_open_child_catalogue_quotation)d" type="action"
+                                    icon="fa-list-alt" attrs="{'invisible': [('child_catalogue_quotation_count', '=', 0)]}">
+                                <field string="Quotations" name="child_catalogue_quotation_count" widget="statinfo"/>
+                            </button>
+                            <button class="oe_stat_button" attrs="{'invisible': [('child_catalogue_quotation_count', '=', 0)]}"/>
+                        </div>
+                        <div class="oe_title">
+                            <label for="name"/>
+                            <h1>
+                                <field name="name" readonly="1"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="partner_id" readonly="1"/>
+                                <field name="partner_rfc_reference" readonly="1"/>
+                                <field name="pass_to_prospective_customer" widget="boolean_toggle" readonly="1"/>
+                            </group>
+                            <group>
+                                <field name="catalogue_with_price" widget="boolean_toggle" readonly="1"/>
+                                <field name="requested_date" readonly="1" requied="1"/>
+                                <field name="expire_date" readonly="1" requied="1"/>
+                                <field name="trade_terms" readonly="1"/>
+                            </group>
+                        </group>
+                        <div class="row mt16 o_settings_container">
+                            <div>
+                                <strong>
+                                    <label for="descriptive_literature"/>
+                                </strong>
+                                <field name="descriptive_literature" widget="html" class="oe-bordered-editor" nolabel="1" requied="1" readonly="1"/>
+                            </div>
+                            <div>
+                                <strong>
+                                    <label for="condition"/>
+                                </strong>
+                                <field name="condition" widget="html" nolabel="1" class="oe-bordered-editor" readonly="1"/>
+                            </div>
+                        </div>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids"/>
+                        <field name="activity_ids"/>
+                        <field name="message_ids" options="{'post_refresh': 'always'}"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="addis_systems_catalogue_request_tree_view" model="ir.ui.view">
+            <field name="name">addis_systems_catalogue_and_order_exchange.sale_order_catalogue_request.tree.view</field>
+            <field name="model">sale.order.catalogue_request</field>
+            <field name="arch" type="xml">
+                <tree string="Catalogue Request">
+                    <field name="name"/>
+                    <field name="partner_rfc_reference"/>
+                    <field name="requested_date" readonly="1"/>
+                    <field name="expire_date" readonly="1"/>
+                    <field name="pass_to_prospective_customer" widget="boolean_toggle" readonly="1"/>
+                    <field name="trade_terms"/>
+                    <field name="state" widget="badge" decoration-muted="state == 'new'" decoration-info="state == 'quoted'" decoration-success="state == 'sent'"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="addis_systems_catalogue_request_calendar_view" model="ir.ui.view">
+            <field name="name">addis_systems_catalogue_and_order_exchange.sale_order_catalogue_request.calendar.view</field>
+            <field name="model">sale.order.catalogue_request</field>
+            <field name="arch" type="xml">
+                <calendar string="Catalogue Request" date_start="requested_date" date_stop="expire_date" color="state" hide_time="true" event_limit="5" quick_add="False">
+                    <field name="name"/>
+                    <field name="partner_rfc_reference"/>
+                    <field name="pass_to_prospective_customer"/>
+                    <field name="trade_terms"/>
+                </calendar>
+            </field>
+        </record>
+
+        <record id="addis_systems_catalogue_request_graph_view" model="ir.ui.view">
+            <field name="name">addis_systems_catalogue_and_order_exchange.sale_order_catalogue_request.graph.view</field>
+            <field name="model">sale.order.catalogue_request</field>
+            <field name="arch" type="xml">
+                <graph string="Catalogue Request">
+                    <field name="name"/>
+                    <field name="state" type="row"/>
+                    <field name="partner_rfc_reference"/>
+                    <field name="pass_to_prospective_customer"/>
+                    <field name="trade_terms"/>
+                </graph>
+            </field>
+        </record>
+
+        <record id="addis_systems_catalogue_request_pivot_view" model="ir.ui.view">
+            <field name="name">addis_systems_catalogue_and_order_exchange.sale_order_catalogue_request.pivot.view</field>
+            <field name="model">sale.order.catalogue_request</field>
+            <field name="arch" type="xml">
+                <pivot string="Catalogue Request">
+                    <field name="name" type="row"/>
+                    <field name="partner_rfc_reference"/>
+                    <field name="pass_to_prospective_customer"/>
+                    <field name="trade_terms"/>
+                </pivot>
+            </field>
+        </record>
+
+        <record id="addis_systems_catalogue_request_search_view" model="ir.ui.view">
+            <field name="name">addis_systems_catalogue_and_order_exchange.sale_order_catalogue_request.search.view</field>
+            <field name="model">sale.order.catalogue_request</field>
+            <field name="arch" type="xml">
+                <search string="Catalogue Request">
+                    <filter string="Draft" name="state_draft_filter" domain="[('state', '=', 'new')]"/>
+                    <filter string="Quoted" name="state_quoted_filter" domain="[('state', '=', 'quoted')]"/>
+                    <filter string="Sent" name="state_sent_filter" domain="[('state', '=', 'sent')]"/>
+                    <separator/>
+                    <filter string="Today" name="today" domain="[('expire_date', '&gt;=', context_today())]"/>
+                    <filter string="This Week" name="this_week"
+                            domain="[('expire_date', '>=', (datetime.datetime.combine(context_today() + relativedelta(weeks=-1,days=1,weekday=0), datetime.time(0,0,0)).to_utc()).strftime('%Y-%m-%d %H:%M:%S')), ('expire_date', '&lt;', (datetime.datetime.combine(context_today() + relativedelta(days=1,weekday=0), datetime.time(0,0,0)).to_utc()).strftime('%Y-%m-%d %H:%M:%S'))]"/>
+                    <filter string="This Month" name="this_month"
+                            domain="[('expire_date','&lt;=',(datetime.date.today()+relativedelta(day=31)).strftime('%Y-%m-%d')),('expire_date','&gt;=',(datetime.date.today()-relativedelta(day=1)).strftime('%Y-%m-%d'))]"/>
+                    <separator/>
+                    <group expand="1" string="Group By">
+                        <filter string="State" name="state_draft_group" domain="[]" context="{'group_by':'state'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="addis_systems_catalogue_request_kanban_view" model="ir.ui.view">
+            <field name="name">addis_systems_catalogue_and_order_exchange.sale_order_catalogue_request.kanban.view</field>
+            <field name="model">sale.order.catalogue_request</field>
+            <field name="arch" type="xml">
+                <kanban>
+                    <field name="id"/>
+                    <field name="name"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="oe_kanban_global_click o_res_partner_kanban">
+                                <div class="oe_kanban_details">
+                                    <strong class="o_kanban_record_title oe_partner_heading">
+                                        <field name="name"/>
+                                        <br/>
+                                        <field name="partner_id"/>
+                                        <div>
+                                            <span class="float-start" title="Requested Date">
+                                                <field name="requested_date"/>
+                                            </span>
+                                            <span class="float-end" title="Expected Date">
+                                                <field name="expire_date"/>
+                                            </span>
+                                        </div>
+                                    </strong>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <record id="addis_systems_catalogue_request_act_window" model="ir.actions.act_window">
+            <field name="name">Catalogue Request</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">sale.order.catalogue_request</field>
+            <field name="view_mode">kanban,tree,form,calendar,graph,pivot</field>
+            <field name="context">{"search_default_this_week":1}</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    There is no Catalogue Request click New Button to add new.
+                </p>
+            </field>
+        </record>
+
+        <menuitem name="Catalogue Request" id="addis_systems_catalogue_request_menu" parent="addis_systems_catalogue_and_order_exchange.addis_systems_sales_catalogue_menu" action="addis_systems_catalogue_request_act_window" sequence="1"/>
+
+
+    </data>
+</odoo>

@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="res_bank_addis_systems_nbe" model="res.bank">
+            <field name="name">National Bank of Ethiopia</field>
+            <field name="bic">NBE</field>
+            <field name="country" ref="base.et"/>
+            <field name="city">Addis Ababa</field>
+            <field name="street"/>
+            <field name="zip"/>
+            <field name="phone">+251 115 177 088</field>
+            <field name="email"/>
+        </record>
+
+        <record id="res_bank_addis_systems_commercial" model="res.bank">
+            <field name="name">Commercial Bank Of Ethiopia</field>
+            <field name="bic">CBE</field>
+            <field name="country" ref="base.et"/>
+            <field name="city">Addis Ababa</field>
+            <field name="street"/>
+            <field name="zip"/>
+            <field name="phone">+251-115-515004</field>
+            <field name="email">cbe@combanketh.et.</field>
+        </record>
+
+        <record id="res_bank_addis_systems_abbay" model="res.bank">
+            <field name="name">Abbay Bank</field>
+            <field name="bic"/>
+            <field name="country" ref="base.et"/>
+            <field name="city">Addis Ababa</field>
+            <field name="street"/>
+            <field name="zip"/>
+            <field name="phone">+251 115 571 043</field>
+            <field name="email">abay-bank-admin@abaybank.com.et</field>
+        </record>
+
+        <record id="res_bank_addis_systems_addis" model="res.bank">
+            <field name="name">Addis International Bank</field>
+            <field name="bic"/>
+            <field name="country" ref="base.et"/>
+            <field name="city">Addis Ababa</field>
+            <field name="street">Jomo Kenyatta St</field>
+            <field name="zip"/>
+            <field name="phone">+251-115-549800</field>
+            <field name="email"/>
+        </record>
+
+        <record id="res_bank_addis_systems_abyssinia" model="res.bank">
+            <field name="name">Abyssinia Bank</field>
+            <field name="bic"/>
+            <field name="country" ref="base.et"/>
+            <field name="city">Addis Ababa</field>
+            <field name="street">The Gambia Road,</field>
+            <field name="zip"/>
+            <field name="phone">+25115183981</field>
+            <field name="email">https://www.bankofabyssinia.com/contact-us/contactcenter@bankofabyssinia.com</field>
+        </record>
+
+        <record id="res_bank_addis_systems_awash" model="res.bank">
+            <field name="name">Awash Bank</field>
+            <field name="bic"/>
+            <field name="country" ref="base.et"/>
+            <field name="city">Addis Ababa</field>
+            <field name="street">Ras Abebe Aregay St</field>
+            <field name="zip"/>
+            <field name="phone">0115-57-12-54</field>
+            <field name="email">contactcenter@awashbank.com</field>
+        </record>
+
+        <record id="res_bank_addis_systems_birhan" model="res.bank">
+            <field name="name">Birhan Bank</field>
+            <field name="bic"/>
+            <field name="country" ref="base.et"/>
+            <field name="city">Addis Ababa</field>
+            <field name="street"/>
+            <field name="zip"/>
+            <field name="phone">+251 11 618 5722</field>
+            <field name="email">info@berhanbanksc.com</field>
+        </record>
+
+        <record id="res_bank_addis_systems_bunna" model="res.bank">
+            <field name="name">Bunna Bank</field>
+            <field name="bic"/>
+            <field name="country" ref="base.et"/>
+            <field name="city">Addis Ababa</field>
+            <field name="street">Bole</field>
+            <field name="zip"/>
+            <field name="phone">+251 11 158 0861</field>
+            <field name="email">info@bunnabanksc.com</field>
+        </record>
+
+        <record id="res_bank_addis_systems_construction" model="res.bank">
+            <field name="name">Construction and Bussiness Bank</field>
+            <field name="bic"/>
+            <field name="country" ref="base.et"/>
+            <field name="city">Addis Ababa</field>
+            <field name="street">Fit Habte Gyorgis Street</field>
+            <field name="zip"/>
+            <field name="phone">(+251) 11-276-8508</field>
+            <field name="email"/>
+        </record>
+
+        <record id="res_bank_addis_systems_cooperative" model="res.bank">
+            <field name="name">Cooperative Bank Of Oromia</field>
+            <field name="bic">CBO</field>
+            <field name="country" ref="base.et"/>
+            <field name="city">Addis Ababa</field>
+            <field name="street"/>
+            <field name="zip"/>
+            <field name="phone">+251115150229</field>
+            <field name="email">info@coopbankoromia.com.et</field>
+        </record>
+
+        <record id="res_bank_addis_systems_dashen" model="res.bank">
+            <field name="name">Dashen Bank</field>
+            <field name="bic"/>
+            <field name="country" ref="base.et"/>
+            <field name="city">Addis Ababa</field>
+            <field name="street"/>
+            <field name="zip"/>
+            <field name="phone">+251 911575827</field>
+            <field name="email">info@dashenbanksc.com</field>
+        </record>
+
+        <record id="res_bank_addis_systems_development" model="res.bank">
+            <field name="name">Development Bank of Ethiopia</field>
+            <field name="bic"/>
+            <field name="country" ref="base.et"/>
+            <field name="city">Addis Ababa</field>
+            <field name="street"/>
+            <field name="zip"/>
+            <field name="phone">+251115511188/89</field>
+            <field name="email">dbe@ethionet.et</field>
+        </record>
+
+        <record id="res_bank_addis_systems_lion" model="res.bank">
+            <field name="name">Lion Bank</field>
+            <field name="bic"/>
+            <field name="country" ref="base.et"/>
+            <field name="city">Addis Ababa</field>
+            <field name="street">Haile G.Selassie Avenue</field>
+            <field name="zip"/>
+            <field name="phone">(+251) 11 662 60 00/60</field>
+            <field name="email">info@anbesabank.com</field>
+        </record>
+
+        <record id="res_bank_addis_systems_nib" model="res.bank">
+            <field name="name">Nib International Bank</field>
+            <field name="bic">NIB</field>
+            <field name="country" ref="base.et"/>
+            <field name="city">Addis Ababa</field>
+            <field name="street">Ras Abebe Aragay St</field>
+            <field name="zip"/>
+            <field name="phone">+25115503288</field>
+            <field name="email">nibcontact@nibbanksc.com</field>
+        </record>
+
+        <record id="res_bank_addis_systems_oromiya" model="res.bank">
+            <field name="name">Oromia International Bank</field>
+            <field name="bic">OIB</field>
+            <field name="country" ref="base.et"/>
+            <field name="city">Addis Ababa</field>
+            <field name="street">Bole, Africa Avenue</field>
+            <field name="zip"/>
+            <field name="phone">+251-11-51-83-880</field>
+            <field name="email">info@orointbank.com</field>
+        </record>
+
+        <record id="res_bank_addis_systems_united" model="res.bank">
+            <field name="name">United Bank</field>
+            <field name="bic"/>
+            <field name="country" ref="base.et"/>
+            <field name="city">Addis Ababa</field>
+            <field name="street"/>
+            <field name="zip"/>
+            <field name="phone">+251 0906141414</field>
+            <field name="email"/>
+        </record>
+
+        <record id="res_bank_addis_systems_wegagen" model="res.bank">
+            <field name="name">Wegagen Bank</field>
+            <field name="bic"/>
+            <field name="country" ref="base.et"/>
+            <field name="city">Addis Ababa</field>
+            <field name="street">Ras Mekonen St</field>
+            <field name="zip"/>
+            <field name="phone">+251 115523800</field>
+            <field name="email">info@wegagen.com</field>
+        </record>
+
+        <record id="res_bank_addis_systems_zemen" model="res.bank">
+            <field name="name">Zemen Bank</field>
+            <field name="bic"/>
+            <field name="country" ref="base.et"/>
+            <field name="city">Addis Ababa</field>
+            <field name="street"/>
+            <field name="zip"/>
+            <field name="phone">+25 11 4 713478/79</field>
+            <field name="email"/>
+        </record>
+
+        <record id="res_bank_addis_systems_debub" model="res.bank">
+            <field name="name">Debub Global Bank</field>
+            <field name="bic"/>
+            <field name="country" ref="base.et"/>
+            <field name="city">Addis Ababa</field>
+            <field name="street">Ras Abebe Damtew St</field>
+            <field name="zip"/>
+            <field name="phone">+251-115-581-245/17</field>
+            <field name="email">info@debubglobalbank.com</field>
+        </record>
+
+        <record id="res_bank_addis_systems_enat" model="res.bank">
+            <field name="name">Enat Bank</field>
+            <field name="bic"/>
+            <field name="country" ref="base.et"/>
+            <field name="city">Addis Ababa</field>
+            <field name="street">Kirkos sub-city, woreda 8, in front of Yordanos Hotel</field>
+            <field name="zip"/>
+            <field name="phone">+251 115 158278</field>
+            <field name="email">info@enatbanksc.com</field>
+        </record>
+
+        <record id="res_bank_addis_systems_zamzam" model="res.bank">
+            <field name="name">ZamZam Bank</field>
+            <field name="bic"/>
+            <field name="country" ref="base.et"/>
+            <field name="city">Addis Ababa</field>
+            <field name="street"/>
+            <field name="zip"/>
+            <field name="phone"/>
+            <field name="email">info@zamzambank.com</field>
+        </record>
+
+        <record id="res_bank_addis_systems_hijra" model="res.bank">
+            <field name="name">Hijra Bank</field>
+            <field name="bic"/>
+            <field name="country" ref="base.et"/>
+            <field name="city">Addis Ababa</field>
+            <field name="street"/>
+            <field name="zip"/>
+            <field name="phone">+251 92 033 3337</field>
+            <field name="email">info@hijra-bank.com</field>
+        </record>
+
+        <record id="res_bank_addis_systems_siinqee" model="res.bank">
+            <field name="name">Siinqee Bank</field>
+            <field name="bic"/>
+            <field name="country" ref="base.et"/>
+            <field name="city">Addis Ababa</field>
+            <field name="street"/>
+            <field name="zip"/>
+            <field name="phone">011-215-0481</field>
+            <field name="email"/>
+        </record>
+
+        <record id="res_bank_addis_systems_shebelle" model="res.bank">
+            <field name="name">Shabelle Bank</field>
+            <field name="bic"/>
+            <field name="country" ref="base.et"/>
+            <field name="city">Addis Ababa</field>
+            <field name="street"/>
+            <field name="zip"/>
+            <field name="phone">+251257756976/77</field>
+            <field name="email">info@shabellebank.com</field>
+        </record>
+
+        <record id="res_bank_addis_systems_amhara" model="res.bank">
+            <field name="name">Amhara Bank</field>
+            <field name="bic"/>
+            <field name="country" ref="base.et"/>
+            <field name="city">Addis Ababa</field>
+            <field name="street"/>
+            <field name="zip"/>
+            <field name="phone">+251-912001819</field>
+            <field name="email">info@amharabank.com.et</field>
+        </record>
+
+        <record id="res_bank_addis_systems_goh" model="res.bank">
+            <field name="name">Goh Betoch Bank SC</field>
+            <field name="bic"/>
+            <field name="country" ref="base.et"/>
+            <field name="city">Addis Ababa</field>
+            <field name="street"/>
+            <field name="zip"/>
+            <field name="phone">+251-116-687967</field>
+            <field name="email">info@gohbetbank.com</field>
+        </record>
+
+        <record id="res_bank_addis_systems_tsedey" model="res.bank">
+            <field name="name">Tsedey Bank</field>
+            <field name="bic"/>
+            <field name="country" ref="base.et"/>
+            <field name="city">Addis Ababa</field>
+            <field name="street">Ras Mekonen Ave</field>
+            <field name="zip"/>
+            <field name="phone">+251-11-558-12701</field>
+            <field name="email">info@tsedeybank-sc.com</field>
+        </record>
+
+        <record id="res_bank_addis_systems_tsehay" model="res.bank">
+            <field name="name">Tsehay Bank</field>
+            <field name="bic"/>
+            <field name="country" ref="base.et"/>
+            <field name="city">Addis Ababa</field>
+            <field name="street"/>
+            <field name="zip"/>
+            <field name="phone"/>
+            <field name="email">info@tsehaybank.com.et</field>
+        </record>
+
+
+    </data>
+</odoo>

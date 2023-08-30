@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+
+        <!--    Activate the Purchase Agreement Option    -->
+
+        <record model="res.config.settings" id="addis_systems_purchase_agreement_setting_setter">
+            <field name="use_twilio_rtc_servers" eval="1"/>
+            <field name="module_purchase_requisition" eval="1"/>
+        </record>
+
+        <function name="execute" model="res.config.settings">
+            <value eval="[ref('addis_systems_purchase_agreement_setting_setter')]"/>
+        </function>
+
+        <!--    Sequence    -->
+
+        <record id="sequence_catalogue_rfc" model="ir.sequence">
+            <field name="name">Request For Catalogue Sequence</field>
+            <field name="code">purchase.rfc</field>
+            <field name="prefix">RFC/</field>
+            <field name="padding">4</field>
+            <field name="suffix">/%(year)s</field>
+            <field eval="1" name="number_next"/>
+            <field eval="1" name="number_increment"/>
+            <field name="implementation">standard</field>
+            <field eval="False" name="company_id"/>
+        </record>
+
+        <record id="sequence_catalogue_request" model="ir.sequence">
+            <field name="name">Catalogue Request Sequence</field>
+            <field name="code">sale.catalogue.request</field>
+            <field name="prefix">CARQ/</field>
+            <field name="padding">4</field>
+            <field name="suffix">/%(year)s</field>
+            <field eval="1" name="number_next"/>
+            <field eval="1" name="number_increment"/>
+            <field name="implementation">standard</field>
+            <field eval="False" name="company_id"/>
+        </record>
+
+        <record id="sequence_catalogue_quotation" model="ir.sequence">
+            <field name="name">Catalogue Quotation Sequence</field>
+            <field name="code">sale.catalogue.quotation</field>
+            <field name="prefix">CAQU/</field>
+            <field name="padding">4</field>
+            <field name="suffix">/%(year)s</field>
+            <field eval="1" name="number_next"/>
+            <field eval="1" name="number_increment"/>
+            <field name="implementation">standard</field>
+            <field eval="False" name="company_id"/>
+        </record>
+
+        <record id="sequence_catalogue" model="ir.sequence">
+            <field name="name">Catalogue Sequence</field>
+            <field name="code">purchase.catalogue</field>
+            <field name="prefix">CAT/</field>
+            <field name="padding">4</field>
+            <field name="suffix">/%(year)s</field>
+            <field eval="1" name="number_next"/>
+            <field eval="1" name="number_increment"/>
+            <field name="implementation">standard</field>
+            <field eval="False" name="company_id"/>
+        </record>
+
+    </data>
+</odoo>

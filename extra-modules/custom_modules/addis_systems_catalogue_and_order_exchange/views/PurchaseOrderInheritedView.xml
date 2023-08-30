@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="addis_purchase_order_inherited_view" model="ir.ui.view">
+            <field name="name">addis_systems_catalogue_and_order_exchange.res_company.addis_purchase_order_inherited_form_view</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.purchase_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='partner_ref']" position="attributes">
+                    <attribute name="attrs">{'readonly': [('catalogue_id', '!=', False)]}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='currency_id']" position="after">
+                    <field name="e_ordered" invisible="1"/>
+                    <field name="partner_e_invoicing" invisible="1"/>
+                    <field name="updated_price" invisible="1"/>
+                </xpath>
+                <xpath expr="//header/button[@name='action_rfq_send']" position="after">
+                    <button name="send_purchase_order_confirmed_e_order" class="oe_highlight" string='Send AS ORD' type='object' attrs="{'invisible': ['|', '|', ('state', '!=', 'purchase'), ('e_ordered', '=', True), ('partner_e_invoicing', '=', False)]}"/>
+                    <button name="send_purchase_quotation_price_request" class="oe_highlight" string='Request Price' type='object' attrs="{'invisible': ['|',('state', '!=', 'draft'), ('updated_price', '=', True)]}"/>
+                </xpath>
+                <xpath expr="//field[@name='fiscal_position_id']" position="after">
+                    <field name="catalogue_id" readonly="1"/>
+                </xpath>
+                <!--       For Catalogue Quotations on draft state        -->
+                <xpath expr="//field[@name='price_unit']" position="before">
+                    <field name="catalogue_id" invisible="1"/>
+                </xpath>
+                <xpath expr="//field[@name='order_line']/tree/field[@name='price_unit']" position="attributes">
+                    <attribute name="attrs">{'readonly': [('catalogue_id', '!=', False)]}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='order_line']/tree/field[@name='product_id']" position="attributes">
+                    <attribute name="attrs">{'readonly': [('catalogue_id', '!=', False)]}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='order_line']/tree/field[@name='name']" position="attributes">
+                    <attribute name="attrs">{'readonly': [('catalogue_id', '!=', False)]}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='order_line']/tree/field[@name='date_planned']" position="attributes">
+                    <attribute name="attrs">{'readonly': [('catalogue_id', '!=', False)]}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='tax_totals']" position="replace">
+                    <field name="tax_totals" widget="account-tax-totals-field-addis" nolabel="1" colspan="2" readonly="1"/>
+                </xpath>
+                <!--       For Catalogue Quotations on sent state        -->
+                <xpath expr="//field[@name='order_line']/tree/field[@name='product_qty']" position="attributes">
+                    <attribute name="attrs">{'readonly': ['&amp;', ('catalogue_id', '!=', False), ('state', '=', 'sent')]}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='order_line']/tree/field[@name='taxes_id']" position="attributes">
+                    <attribute name="attrs">{'readonly': ['&amp;', ('catalogue_id', '!=', False), ('state', '=', 'sent')]}</attribute>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

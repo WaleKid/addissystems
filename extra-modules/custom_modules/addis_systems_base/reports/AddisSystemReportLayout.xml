@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+
+        <template id="addis_systems_address_layout">
+            <t t-set="colclass" t-value="('col-sm-5' if report_type == 'html' else 'col-5') + ' ml-auto'"/>
+            <t t-if="address">
+                <div class="address row">
+                    <t t-if="information_block">
+                        <t t-set="colclass" t-value="'col-8 offset-1'"/>
+                        <div name="information_block" class="col-10">
+                            <t t-out="information_block"/>
+                        </div>
+                    </t>
+                    <div name="address" t-att-class="colclass">
+                        <t t-esc="address"/>
+                    </div>
+                </div>
+            </t>
+        </template>
+
+        <template id="addis_systems_report">
+            <div t-attf-class="header o_company_#{company.id}_layout" t-att-style="report_header_style">
+                <div class="o_boxed_header">
+                    <div class="row mb8">
+                        <div class="col-9 text-start mb4">
+                            <div name="company_address" class="float-start mb4" style="width:26%">
+                                <img t-if="company.logo" t-att-src="image_data_uri(company.logo)" alt="Logo"/>
+                            </div>
+                            <div name="company_address" class="float-end mb4" style="width:72%">
+                                <h2 t-if="company.name" t-field="company.name" style="margin-top:2%;font-color:blue;font-weight: bold;font-style: italic;"/>
+                                <span>
+                                    <strong>Tin Number:</strong>
+                                    <span t-if="company.vat" t-field="company.vat"/>
+                                </span>
+                                <br/>
+                                <span>
+                                    <strong>Registry:</strong>
+                                    <span t-if="company.vat" t-field="company.vat"/>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="float-right col-3 text-end mb4">
+                            <div class="mt0 h4" t-field="company.report_header"/>
+                            <div name="company_address" class="float-end mb4">
+                                <span t-if="company.company_details" t-field="company.company_details"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div t-attf-class="article o_report_layout_boxed o_company_#{company.id}_layout {{  'o_report_layout_background' if company.layout_background in ['Geometric', 'Custom']  else  '' }}"
+                 t-attf-style="background-image: url({{ 'data:image/png;base64,%s' % company.layout_background_image.decode('utf-8') if company.layout_background_image and company.layout_background == 'Custom' else '/base/static/img/bg_background_template.jpg' if company.layout_background == 'Geometric' else ''}});"
+                 t-att-data-oe-model="o and o._name" t-att-data-oe-id="o and o.id" t-att-data-oe-lang="o and o.env.context.get('lang')">
+                <div class="pt-5">
+                    <!-- This div ensures that the address is not cropped by the header. -->
+                    <!--                    <t t-call="addis_systems_base.addis_systems_address_layout"/>-->
+                </div>
+                <t t-out="0"/>
+            </div>
+
+            <div t-attf-class="footer o_boxed_footer o_company_#{company.id}_layout">
+                <div class="text-center">
+                    <div t-field="company.report_footer"/>
+                    <div t-if="report_type == 'pdf'">
+                        Page:
+                        <span class="page"/>
+                        /
+                        <span class="topage"/>
+                    </div>
+                </div>
+            </div>
+        </template>
+
+        <record id="report_layout_addis_systems" model="report.layout">
+            <field name="name">Addis Systems</field>
+            <field name="sequence">1</field>
+            <field name="view_id" ref="addis_systems_base.addis_systems_report"/>
+            <field name="image">/addis_systems_base/static/img/preview_background.png</field>
+            <field name="pdf">/addis_systems_base/static/pdf/preview_background.pdf</field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="addis_systems_catalogue_quotations_form_view" model="ir.ui.view">
+            <field name="name">addis_systems_catalogue_and_order_exchange.sale_order_catalogue_quotations.form.view</field>
+            <field name="model">sale.order.catalogue_quotations</field>
+            <field name="arch" type="xml">
+                <form string="Catalogue Quotations">
+                    <header>
+                        <button name="seller_action_send_catalogue_quotation_to_buyer" string='Send' type='object' attrs="{'invisible': [('state', '=', 'sent')]}"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,sent"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <label for="name"/>
+                            <h1>
+                                <field name="name" placeholder="Title" readonly="1"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="partner_id" attrs="{'readonly': [('catalogue_request_id', '!=', False)]}"/>
+                                <field name="catalogue_request_id" string="Request Reference"/>
+                            </group>
+                            <group>
+                                <field name="with_price" widget="boolean_toggle" attrs="{'readonly': [('catalogue_request_id', '!=', False)]}"/>
+                                <field name="pass_to_prospective_customer" widget="boolean_toggle" attrs="{'readonly': [('catalogue_request_id', '!=', False)]}"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Products" name="products">
+                                <field name="catalogue_quotation_line" widget="one2many" attrs="{'readonly': [('state', '=', 'sent')]}">
+                                    <tree string="Products" editable="bottom">
+                                        <field name="with_price" invisible="1"/>
+                                        <field name="sequence" widget="handle"/>
+                                        <field name="product_id" context="{'default_detailed_type': 'product'}"/>
+                                        <field name="product_tmpl_id" invisible="1"/>
+                                        <field name="product_uom_category_id" invisible="1"/>
+                                        <field name="product_uom_id" options="{'no_open':True,'no_create':True}" groups="uom.group_uom"/>
+                                        <field name="product_type"/>
+                                        <field name="default_code"/>
+                                        <field name="product_price" attrs="{'invisible': [('with_price', '=', False)]}"/>
+                                        <field name="weight" string="Weight (KG)" optional="hidden"/>
+                                        <field name="volume" string="Volume (m2)" optional="hidden"/>
+                                        <field name="lead_time" string="Lead Time (D)" optional="show"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Description" name="description">
+                                <div class="row mt16 o_settings_container">
+                                    <div>
+                                        <strong>
+                                            <label for="descriptive_literature"/>
+                                        </strong>
+                                        <field name="descriptive_literature" widget="html" class="oe-bordered-editor" nolabel="1" requied="1" readonly="1"/>
+                                    </div>
+                                    <div>
+                                        <strong>
+                                            <label for="condition"/>
+                                        </strong>
+                                        <field name="condition" widget="html" nolabel="1" class="oe-bordered-editor" readonly="1"/>
+                                    </div>
+                                </div>
+                            </page>
+                        </notebook>
+
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids"/>
+                        <field name="activity_ids"/>
+                        <field name="message_ids" options="{'post_refresh': 'always'}"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="addis_systems_catalogue_quotations_tree_view" model="ir.ui.view">
+            <field name="name">addis_systems_catalogue_and_order_exchange.sale_order_catalogue_quotations.tree.view</field>
+            <field name="model">sale.order.catalogue_quotations</field>
+            <field name="arch" type="xml">
+                <tree string="Catalogue Quotations">
+                    <field name="name"/>
+                    <field name="partner_id"/>
+                    <field name="catalogue_request_id" string="Request Reference"/>
+                    <field name="pass_to_prospective_customer" widget="boolean_toggle" readonly="1"/>
+                    <field name="state" widget="badge" decoration-info="state == 'draft'" decoration-success="state == 'sent'"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="addis_systems_catalogue_quotations_calendar_view" model="ir.ui.view">
+            <field name="name">addis_systems_catalogue_and_order_exchange.sale_order_catalogue_quotations.calendar.view</field>
+            <field name="model">sale.order.catalogue_quotations</field>
+            <field name="arch" type="xml">
+                <calendar string="Catalogue Quotations">
+                    <field name="name"/>
+                    <field name="partner_id" widget="monetary"/>
+                    <field name="pass_to_prospective_customer"/>
+                </calendar>
+            </field>
+        </record>
+
+        <record id="addis_systems_catalogue_quotations_graph_view" model="ir.ui.view">
+            <field name="name">addis_systems_catalogue_and_order_exchange.sale_order_catalogue_quotations.graph.view</field>
+            <field name="model">sale.order.catalogue_quotations</field>
+            <field name="arch" type="xml">
+                <graph string="Catalogue Quotations">
+                    <field name="name"/>
+                    <field name="partner_id"/>
+                    <field name="pass_to_prospective_customer"/>
+                </graph>
+            </field>
+        </record>
+
+        <record id="addis_systems_catalogue_quotations_pivot_view" model="ir.ui.view">
+            <field name="name">addis_systems_catalogue_and_order_exchange.sale_order_catalogue_quotations.pivot.view</field>
+            <field name="model">sale.order.catalogue_quotations</field>
+            <field name="arch" type="xml">
+                <pivot string="Catalogue Quotations">
+                    <field name="name" type="row"/>
+                    <field name="partner_id" type="row"/>
+                    <field name="pass_to_prospective_customer" type="row"/>
+                </pivot>
+            </field>
+        </record>
+
+        <record id="addis_systems_catalogue_quotations_search_view" model="ir.ui.view">
+            <field name="name">addis_systems_catalogue_and_order_exchange.sale_order_catalogue_quotations.search.view</field>
+            <field name="model">sale.order.catalogue_quotations</field>
+            <field name="arch" type="xml">
+                <search string="Catalogue Quotations">
+                    <group expand="1" string="Group By">
+                        <filter string="Draft" name="state_draft_filter" domain="[('state', '=', 'draft')]"/>
+                        <separator/>
+                        <group expand="1" string="Group By">
+                            <filter string="State" name="state_draft_group" domain="[]" context="{'group_by':'state'}"/>
+                        </group>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="addis_systems_catalogue_quotations_kanban_view" model="ir.ui.view">
+            <field name="name">addis_systems_catalogue_and_order_exchange.sale_order_catalogue_quotations.kanban.view</field>
+            <field name="model">sale.order.catalogue_quotations</field>
+            <field name="arch" type="xml">
+                <kanban>
+                    <field name="id"/>
+                    <field name="name"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="oe_kanban_global_click o_res_partner_kanban">
+                                <div class="oe_kanban_details">
+                                    <strong class="o_kanban_record_title oe_partner_heading">
+                                        <field name="name"/>
+                                        <field name="partner_id"/>
+                                    </strong>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <record id="addis_systems_catalogue_quotations_act_window" model="ir.actions.act_window">
+            <field name="name">Catalogue Quotations</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">sale.order.catalogue_quotations</field>
+            <field name="view_mode">tree,kanban,form,calendar,graph,pivot</field>
+            <field name="context">{"search_default_state_draft_filter":1}</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    There is no Catalogue Quotation click New Button to add new.
+                </p>
+            </field>
+        </record>
+
+        <!--        <menuitem name="Catalogue Quotations" id="addis_systems_catalogue_quotations_menu" parent="addis_systems_catalogue_and_order_exchange.addis_systems_sales_catalogue_menu" action="addis_systems_catalogue_quotations_act_window" sequence="1"/>-->
+
+    </data>
+</odoo>

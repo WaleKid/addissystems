@@ -1,0 +1,7 @@
+
+.as_pager_refresh {
+	color: $gray-700;
+	&.as_active_autoload{
+		color: $success;
+	}
+}

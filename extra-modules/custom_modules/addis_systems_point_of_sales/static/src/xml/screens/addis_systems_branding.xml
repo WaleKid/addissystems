@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <t t-name="addis_systems_logo_branding" t-inherit="point_of_sale.Chrome" t-inherit-mode="extension" owl="1">
+            <xpath expr="//div[@class='pos-branding' ]" position="replace">
+                    <img t-if="!env.isMobile" class="pos-logo" t-on-click="() => this.trigger('toggle-debug-widget')"
+                         src="/addis_systems_point_of_sales/static/src/img/logo.png" alt="Logo"/>
+                <CashMoveButton t-if="showCashMoveButton()"/>
+                <TicketButton isTicketScreenShown="isTicketScreenShown"/>
+
+            </xpath>
+        </t>
+</templates>

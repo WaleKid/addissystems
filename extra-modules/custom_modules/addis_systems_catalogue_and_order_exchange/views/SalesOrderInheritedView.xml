@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="addis_sales_order_inherited_view" model="ir.ui.view">
+            <field name="name">addis_systems_catalogue_and_order_exchange.addis_sales_order_inherited_form_view.form</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='client_order_ref']" position="after">
+                    <field name="catalogue_quotation_id"/>
+                    <field name="with_price"/>
+                </xpath>
+                <xpath expr="//header/button[@name='action_quotation_send']" position="after">
+                    <button name="send_sales_order_quotation_update_e_order" class="oe_highlight" string='Send E-Order' type='object' attrs="{'invisible': ['|', ('state', '!=', 'draft'), ('with_price', '=', True)]}"/>
+                </xpath>
+                <xpath expr="//field[@name='catalogue_quotation_id']" position="attributes">
+                    <attribute name="readonly">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='client_order_ref']" position="attributes">
+                    <attribute name="readonly">1</attribute>
+                </xpath>
+
+                <xpath expr="//field[@name='order_line']/tree/field[@name='product_id']" position="after">
+                    <field name="catalogue_quotation_id" invisible="1"/>
+                    <field name="client_order_ref" invisible="1"/>
+                </xpath>
+                <xpath expr="//field[@name='order_line']/tree/field[@name='product_template_id']" position="attributes">
+                    <attribute name="attrs">{'readonly': ['|', ('catalogue_quotation_id', '!=', False), ('client_order_ref', '!=', False)]}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='order_line']/tree/field[@name='name']" position="attributes">
+                    <attribute name="attrs">{'readonly': ['|', ('catalogue_quotation_id', '!=', False), ('client_order_ref', '!=', False)]}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='order_line']/tree/field[@name='product_uom_qty']" position="attributes">
+                    <attribute name="attrs">{'readonly': ['|', ('catalogue_quotation_id', '!=', False), ('client_order_ref', '!=', False)]}</attribute>
+                </xpath>
+
+                <xpath expr="//field[@name='tax_totals']" position="replace">
+                    <field name="tax_totals" widget="account-tax-totals-field-addis" nolabel="1" colspan="2" readonly="1"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

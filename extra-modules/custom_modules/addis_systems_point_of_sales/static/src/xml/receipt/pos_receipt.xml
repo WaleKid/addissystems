@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>                                                                                 <?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-name="OrderReceipt" t-inherit="point_of_sale.OrderReceipt" t-inherit-mode="extension" owl="1">
+
+        <xpath expr="//div[hasclass('pos-receipt')]" position="replace">
+            <style type="text/css">
+                    .parent {
+                text-align: center;
+                font-size: 10px;
+                font-weight: bold;
+                }
+                .child {
+                display: inline-block;
+                font-size: 10px;
+                font-weight: bold;
+                }
+            </style>
+
+            <t t-set="items" t-value="0"/>
+            <t t-set="sub_tottal" t-value="0"/>
+            <t t-set="taxable" t-value="0"/>
+            <t t-set="non_taxable" t-value="0"/>
+            <t t-set="tax" t-value="0"/>
+
+            <div class="pos-receipt" style="border-bottom:1px solid #000">
+                <!--       Company Information         -->
+                <div class="pos-receipt-contact">
+                    <t t-if="receipt.company.vat">
+                        <div>Tin :<t t-esc="receipt.company.vat"/></div>
+                        <div>-------------------------------------------------</div>
+                    </t>
+                    <t t-if="receipt.company.trade_name">
+                        <div><t t-esc="receipt.company.trade_name" /></div>
+                    </t>
+                    <t t-if="receipt.company.contact_address">
+                        <div><t t-esc="receipt.company.contact_address" /></div>
+                    </t>
+                    <t t-if="receipt.company.phone">
+                        <div>Tel:<t t-esc="receipt.company.phone"/></div>
+                    </t>
+                    <t t-if="receipt.company.email">
+                        <div><t t-esc="receipt.company.email" /></div>
+                    </t>
+                    <t t-if="receipt.company.website">
+                        <div><t t-esc="receipt.company.website" /></div>
+                    </t>
+                </div>
+                <!--       Invoice Information         -->
+                <div class="parent pos-receipt-contact" style="margin-top:1rem">
+                    <div class='child' style="width:50%">
+                        <div>Inv No : INV/2023/00030</div>
+                    </div>
+                    <div class='child' style="width:50%">
+                        <div>Date : <t t-esc="receipt.date.localestring"/></div>
+                    </div>
+                </div>
+                <!--       Buyer Information         -->
+                <div class="pos-receipt-contact" style="margin-top:1rem">
+                    <t>
+                        <div style='text-align:center'>
+                            <div>============ CASH INVOICE ============</div>
+                        </div>
+                    </t>
+                    <t t-if="receipt.name">
+                        <div style='margin-top:10px;text-align:left'>
+                            <div><span>Ref CS : <t t-esc="receipt.name"/></span></div>
+                        </div>
+                    </t>
+                    <t t-if="receipt.cashier">
+                        <div style='text-align:left'>
+                            <div><span>Operator : <t t-esc="receipt.cashier"/></span></div>
+                        </div>
+                    </t>
+                    <t t-if="receipt.partner.name">
+                        <div style='text-align:left'>
+                            <div><span>Invoice To : <t t-esc="receipt.partner.name"/></span></div>
+                        </div>
+                    </t>
+                    <t t-if="receipt.partner.vat">
+                        <div style='text-align:left'>
+                            <div><span>Buyer's Tin : <t t-esc="receipt.partner.vat"/></span></div>
+                        </div>
+                    </t>
+                </div>
+                <!--       Order Lines and Payment Information         -->
+                <xpath expr="//div[hasclass('orderlines')]" position="replace">
+                    <div class="orderlines">
+                        <!--         Order Lines         -->
+                        <table class='receipt-orderlines' style="border-bottom:1px solid #000;margin-top: 1rem">
+                            <colgroup>
+                                <col width='30%'/>
+                                <col width='15%'/>
+                                <col width='20%'/>
+                                <col width='30%'/>
+                            </colgroup>
+                            <tr style="border-bottom: 1px solid black;border-top: 1px solid black;">
+                                <th style='text-align:left'>Description</th>
+                                <th style='text-align:center'>Qty</th>
+                                <th style='text-align:center'>Price</th>
+                                <th style='text-align:right'>Subtotal</th>
+                            </tr>
+                            <tr t-foreach="orderlines" t-as="orderline" t-key="orderline.id">
+                                <t t-set="items" t-value="items + 1"/>
+                                <td>
+                                    <t t-esc="orderline.get_product().display_name"/>
+                                    <t t-if="orderline.get_discount() > 0">
+                                        <div class="pos-disc-font">
+                                            With a <t t-esc="orderline.get_discount()"/>% discount
+                                        </div>
+                                    </t>
+                                </td>
+                                <td style='text-align:center'>
+                                    <t t-esc="orderline.get_quantity()"/>
+                                </td>
+                                <td style='text-align:center'>
+                                    <t t-esc="env.pos.format_currency_no_symbol(orderline.get_unit_price())"/>
+                                </td>
+                                <td style='text-align:right'>
+                                    <t t-esc="env.pos.format_currency_no_symbol(orderline.get_price_with_tax())"/>
+                                </td>
+                            </tr>
+                            <tr style="border-top: 1px dashed black;">
+                                <td colspan="2">SUB TOTAL</td>
+                                <td colspan="2"><span t-esc="env.pos.format_currency(receipt.subtotal)" class="pos-receipt-right-align"/></td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">TXBL 1</td>
+                                <td colspan="2"></td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">TXBL 15%</td>
+                                <td colspan="2"><span t-esc="env.pos.format_currency(receipt.total_tax)" class="pos-receipt-right-align"/></td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">NONTXBL</td>
+                                <td colspan="2"></td>
+                            </tr>
+                            <tr style="border-top: 1px solid black;">
+                                <td colspan="2">TOTAL</td>
+                                <td colspan="2"><span t-esc="env.pos.format_currency(receipt.total_with_tax)" class="pos-receipt-right-align"/></td>
+                            </tr>
+                        </table>
+                        <!--         Payment         -->
+                        <div style="margin-top: 1rem"/>
+                        <t t-foreach="receipt.paymentlines" t-as="line" t-key="line.cid">
+                            <div>
+                                <t t-esc="line.name" />
+                                <span t-esc="env.pos.format_currency_no_symbol(line.amount)" class="pos-receipt-right-align"/>
+                            </div>
+                        </t>
+                        <!--         Discount and change         -->
+                        <t t-if="receipt.total_discount">
+                            <div style="margin-top: 1rem">Items
+                                <span t-esc="items" class="pos-receipt-right-align"/>
+                            </div>
+                            <div style="margin-top: 1rem">Discounts
+                                <span t-esc="env.pos.format_currency(receipt.total_discount)" class="pos-receipt-right-align"/>
+                            </div>
+                            <div>Change
+                                <span t-esc="env.pos.format_currency(receipt.change)" class="pos-receipt-right-align"/>
+                            </div>
+                        </t>
+                        <t t-else="">
+                            <div style="margin-top: 1rem">Items
+                                <span t-esc="items" class="pos-receipt-right-align"/>
+                            </div>
+                            <div>Change
+                                <span t-esc="env.pos.format_currency(receipt.change)" class="pos-receipt-right-align"/>
+                            </div>
+                        </t>
+                    </div>
+                </xpath>
+                <!--       QR Code         -->
+                <div t-if="receipt.pos_qr_code">
+                    <br /><br />
+                    <div class="pos-receipt-order-data">
+                        Scan me to request an invoice for your purchase.
+                    </div>
+                    <img id="posqrcode" t-att-src="receipt.pos_qr_code" class="pos-receipt-logo"/>
+                </div>
+                <!--       Addis Systems Info anf footer Information         -->
+                <br/>
+                <div style="text-align:center;font-size:10px;font-weight: bold;">ACK NO:
+                    <t t-esc="env.pos.config"/>
+                </div>
+                <div style="text-align:center;font-size:10px;font-weight: bold;">IRN NO:
+                    <t t-esc="env.pos.config"/>
+                </div>
+                <br/>
+                <div class="pos-receipt-center-align">Powered by Addis Systems. Call 5369</div>
+                <br/>
+                <div class="pos-receipt-center-align">Addis Systems PoS</div>
+                <div class="pos-receipt-center-align">------------------------</div>
+            </div>
+        </xpath>
+
+    </t>
+</templates>

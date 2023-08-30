@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="template_open_child_quotation" model="ir.actions.act_window">
+            <field name="domain">[('catalogue_id', '=', active_id)]</field>
+            <field name="name">Catalogue Quotations</field>
+            <field name="res_model">purchase.order</field>
+        </record>
+
+        <record id="addis_systems_catalogue_form_view" model="ir.ui.view">
+            <field name="name">addis_systems_catalogue_and_order_exchange.purchase_order_catalogue.form.view</field>
+            <field name="model">purchase.order.catalogue</field>
+            <field name="arch" type="xml">
+                <form string="Catalogue">
+                    <header>
+                        <button name="action_create_generate_rfq" string="Generate RFQ" attrs="{'invisible': [('count_product_transfer', '=', 0)]}"
+                                type="object" class="oe_highlight" data-hotkey="w" title="Generate RFQ"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button class="oe_stat_button" name="%(template_open_child_quotation)d" type="action"
+                                    icon="fa-list-alt" attrs="{'invisible': [('child_quotation_count', '=', 0)]}">
+                                <field string="Quotations" name="child_quotation_count" widget="statinfo"/>
+                            </button>
+                        </div>
+                        <div class="oe_title">
+                            <label for="name"/>
+                            <h1>
+                                <field name="name" placeholder="Title" readonly="1"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="partner_id" attrs="{'readonly': [('catalogue_rfc_id', '!=', False)]}"/>
+                                <field name="catalogue_rfc_id" readonly="1"/>
+                                <field name="count_product_transfer" invisible="1"/>
+                            </group>
+                            <group>
+                                <field name="pass_to_prospective_customer" widget="boolean_toggle" attrs="{'readonly': [('catalogue_rfc_id', '!=', False)]}"/>
+                                <field name="catalogue_with_price" widget="boolean_toggle" attrs="{'readonly': [('catalogue_rfc_id', '!=', False)]}"/>
+                            </group>
+                        </group>
+                        <field name="catalogue_line" widget="one2many">
+                            <tree string="Products" editable="bottom" delete="false">
+                                <field name="cat_product_id" readonly="1"/>
+                                <field name="catalogue_with_price" invisible="1"/>
+                                <field name="type"/>
+                                <field name="cat_product_uom_id"/>
+                                <field name="barcode" optional="hidden"/>
+                                <field name="product_price" attrs="{'invisible': [('catalogue_with_price', '=', False)]}"/>
+                                <field name="default_code" optional="hidden"/>
+                                <field name="volume" string="Volume (m3)" optional="hidden"/>
+                                <field name="weight" string="Weight (kg)" optional="hidden"/>
+                                <field name="lead_time" string="Lead Time (d)"/>
+                                <field name="product_transferred" widget="boolean_toggle" optional="hidden"/>
+                                <field name="product_tmpl" optional="hidden"/>
+                                <button name="action_transfer_to_own_catalogue" type="object" icon="fa-plus" title="Create" attrs="{'invisible': [('product_transferred', '=', True)]}"/>
+                            </tree>
+                        </field>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids"/>
+                        <field name="activity_ids"/>
+                        <field name="message_ids" options="{'post_refresh': 'always'}"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="addis_systems_catalogue_tree_view" model="ir.ui.view">
+            <field name="name">addis_systems_catalogue_and_order_exchange.purchase_order_catalogue.tree.view</field>
+            <field name="model">purchase.order.catalogue</field>
+            <field name="arch" type="xml">
+                <tree string="Catalogue">
+                    <field name="name"/>
+                    <field name="partner_id"/>
+                    <field name="pass_to_prospective_customer" widget="boolean_toggle"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="addis_systems_catalogue_calendar_view" model="ir.ui.view">
+            <field name="name">addis_systems_catalogue_and_order_exchange.purchase_order_catalogue.calendar.view</field>
+            <field name="model">purchase.order.catalogue</field>
+            <field name="arch" type="xml">
+                <calendar string="Catalogue">
+                    <field name="name"/>
+                    <field name="partner_id" widget="monetary"/>
+                    <field name="pass_to_prospective_customer"/>
+                </calendar>
+            </field>
+        </record>
+
+        <record id="addis_systems_catalogue_graph_view" model="ir.ui.view">
+            <field name="name">addis_systems_catalogue_and_order_exchange.purchase_order_catalogue.graph.view</field>
+            <field name="model">purchase.order.catalogue</field>
+            <field name="arch" type="xml">
+                <graph string="Catalogue">
+                    <field name="name"/>
+                    <field name="partner_id"/>
+                    <field name="pass_to_prospective_customer"/>
+                </graph>
+            </field>
+        </record>
+
+        <record id="addis_systems_catalogue_pivot_view" model="ir.ui.view">
+            <field name="name">addis_systems_catalogue_and_order_exchange.purchase_order_catalogue.pivot.view</field>
+            <field name="model">purchase.order.catalogue</field>
+            <field name="arch" type="xml">
+                <pivot string="Catalogue">
+                    <field name="name" type="row"/>
+                    <field name="partner_id" type="row"/>
+                    <field name="pass_to_prospective_customer" type="row"/>
+                </pivot>
+            </field>
+        </record>
+
+        <record id="addis_systems_catalogue_search_view" model="ir.ui.view">
+            <field name="name">addis_systems_catalogue_and_order_exchange.purchase_order_catalogue.search.view</field>
+            <field name="model">purchase.order.catalogue</field>
+            <field name="arch" type="xml">
+                <search string="Catalogue">
+                    <group expand="1" string="Group By">
+                        <filter string="Draft" name="state_draft_filter" domain="[('state', '=', 'draft')]"/>
+                        <separator/>
+                        <group expand="1" string="Group By">
+                            <filter string="State" name="state_draft_group" domain="[]" context="{'group_by':'state'}"/>
+                        </group>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="addis_systems_catalogue_kanban_view" model="ir.ui.view">
+            <field name="name">addis_systems_catalogue_and_order_exchange.purchase_order_catalogue.kanban.view</field>
+            <field name="model">purchase.order.catalogue</field>
+            <field name="arch" type="xml">
+                <kanban>
+                    <field name="id"/>
+                    <field name="name"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="oe_kanban_global_click o_res_partner_kanban">
+                                <div class="oe_kanban_details">
+                                    <strong class="o_kanban_record_title oe_partner_heading">
+                                        <field name="name"/>
+                                        <field name="catalogue_with_price" invisible="1"/>
+                                        <span attrs="{'invisible': [('catalogue_with_price', '=', False)]}" class="float-end">With Price</span>
+                                        <div>
+                                            <span class="float-start" title="Requested Date">
+                                                <field name="partner_id"/>
+                                            </span>
+                                            <span class="float-end" title="Expected Date">
+                                                <field name="catalogue_rfc_id"/>
+                                            </span>
+                                        </div>
+                                    </strong>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <record id="addis_systems_catalogue_act_window" model="ir.actions.act_window">
+            <field name="name">Catalogue</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">purchase.order.catalogue</field>
+            <field name="view_mode">tree,kanban,form,calendar,graph,pivot</field>
+            <field name="context">{"search_default_state_draft_filter":1}</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    There is no Catalogue click New Button to add new.
+                </p>
+            </field>
+        </record>
+
+        <!--    Sales/Purchase Parent Catalogue    -->
+        <menuitem name="Catalogue" id="addis_systems_sales_catalogue_menu" parent="sale.sale_menu_root" sequence="13"/>
+        <menuitem name="Catalogue" id="addis_systems_purchase_catalogue_menu" parent="purchase.menu_purchase_root" sequence="1"/>
+
+
+        <!--        <menuitem name="Catalogue" id="addis_systems_catalogue_menu" parent="addis_systems_catalogue_and_order_exchange.addis_systems_purchase_catalogue_menu" action="addis_systems_catalogue_act_window" sequence="2"/>-->
+
+    </data>
+</odoo>

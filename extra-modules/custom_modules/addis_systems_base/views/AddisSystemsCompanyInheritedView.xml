@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="addis_systems_company_inherited_view" model="ir.ui.view">
+            <field name="name">addis_systems_base.model_res_company.inherited_form_view</field>
+            <field name="model">res.company</field>
+            <field name="inherit_id" ref="base.view_company_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//sheet/div[1]" position="inside">
+                    <h3>
+                        <field name="trade_name" placeholder="Trade Name" style="width:75%"/>
+                    </h3>
+                </xpath>
+                <xpath expr="//field[@name='state_id']" position="attributes">
+                    <attribute name="placeholder">Region</attribute>
+                </xpath>
+                <xpath expr="//field[@name='street2']" position="attributes">
+                    <attribute name="placeholder">Street</attribute>
+                </xpath>
+                <xpath expr="//field[@name='street']" position="attributes">
+                    <attribute name="placeholder">Building</attribute>
+                </xpath>
+                <xpath expr="//field[@name='zip']" position="replace"/>
+                <xpath expr="//field[@name='vat']" position="replace">
+                    <field name="vat" string="TIN Number"/>
+                </xpath>
+                <xpath expr="//field[@name='website']" position="after">
+                    <field name="addis_system_id" readonly="1" password="True"/>
+                </xpath>
+                <xpath expr="//sheet/field[@name='logo']" position="before">
+                    <div class="oe_button_box" name="button_box">
+                        <button id="company_e_invoice" class="oe_stat_button" disabled="1" attrs="{'invisible': [('addis_system_id', '=', False)]}">
+                            <div role="img" class="fa fa-fw fa-circle text-success o_button_icon" aria-label="E-Invoice" title="E-Invoice" attrs="{'invisible': [('addis_system_id', '=', False)]}"/>
+                            <div class="o_stat_info" attrs="{'invisible': [('addis_system_id', '=', False)]}"><span class="o_stat_text">Addis Systems</span></div>
+                        </button>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

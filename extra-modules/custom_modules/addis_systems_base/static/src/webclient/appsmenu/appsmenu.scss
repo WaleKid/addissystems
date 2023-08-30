@@ -1,0 +1,20 @@
+.o_navbar_apps_menu .dropdown-toggle {
+	padding: 0px 14px !important;
+}
+	
+.o_navbar_apps_menu.show .dropdown-menu {
+    @include as-disable-scrollbar();
+	overflow-y: auto;
+	position: fixed;
+
+    top: $o-navbar-height;
+    height: calc(100% - #{$o-navbar-height});
+    background-color: $as-appbar-background;
+	@include media-breakpoint-up(lg) {
+	    padding: {
+	        left: 4vw;
+	        right: 4vw;
+
+	    }
+	}
+}

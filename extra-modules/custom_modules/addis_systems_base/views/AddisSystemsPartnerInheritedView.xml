@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="addis_systems_partner_inherited_view" model="ir.ui.view">
+            <field name="name">addis_systems_base.model_res_partner.inherited_form_view</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='state_id']" position="attributes">
+                    <attribute name="placeholder">Region</attribute>
+                </xpath>
+                <xpath expr="//field[@name='street2']" position="attributes">
+                    <attribute name="placeholder">Street</attribute>
+                </xpath>
+                <xpath expr="//field[@name='street']" position="attributes">
+                    <attribute name="placeholder">Building</attribute>
+                </xpath>
+                <xpath expr="//field[@name='zip']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='vat']" position="attributes">
+                    <attribute name="attrs">{'required': [('company_type', '=', 'company')]}</attribute>
+                    <attribute name="placeholder">TIN Number</attribute>
+                    <attribute name="string">TIN Number</attribute>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

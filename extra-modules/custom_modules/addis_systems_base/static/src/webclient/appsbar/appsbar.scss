@@ -1,0 +1,101 @@
+    .as_apps_sidebar_panel {
+        @include as-disable-scrollbar();
+        overflow-y: auto;	
+        position: fixed; 
+        top: $o-navbar-height;
+        height: calc(100% - #{$o-navbar-height}); 
+        background-color: $as-appbar-background;
+        left: 0;
+        .as_apps_sidebar {
+            padding: 0;
+            white-space: nowrap;
+            width: 200px;
+            .as_apps_sidebar_menu {
+                list-style: none;
+                margin: 0;
+                padding: 0;
+                > li {
+                    margin: 0;
+                    padding: 0;
+                    border: 0px;
+                    display: block;
+                    > a {
+                        margin: 0;
+                        border: 0px;
+                        display: block;
+                        cursor: pointer;
+                        font-size: 15px;
+                        font-weight: 300;
+                        overflow: hidden;
+                        padding: 8px 11px;
+                        position: relative;
+                        text-decoration: none;
+                        color: $as-menu-color;
+                        text-overflow: ellipsis;
+                        .as_apps_sidebar_icon {
+                            width: 22px;
+                            height: 22px;
+                            margin-right: 5px;
+                        }
+                    }
+                }
+                > li:hover > a {
+                    background: $o-brand-primary;
+                }
+            }
+        }
+    }
+    
+    @include media-breakpoint-up(lg) {
+        .as_sidebar_type_large {
+            .as_apps_sidebar_panel {
+                width: $as-sidebar-large-width;
+            }
+            .o_navbar + .o_action_manager {
+                padding-left: $as-sidebar-large-width;
+            }
+        }
+        .as_sidebar_type_small {
+            .as_apps_sidebar_panel {
+                width: $as-sidebar-small-width;
+                .as_apps_sidebar_name {
+                    display: none;
+                }
+                .as_apps_sidebar_icon {
+                    margin-right: 0 !important;
+                }
+            }
+            .o_navbar + .o_action_manager {
+                padding-left: $as-sidebar-small-width;
+            }
+        }
+        .as_sidebar_type_invisible {
+            .as_apps_sidebar_panel {
+                display: none;
+            }
+        }
+    }
+    
+    
+
+    @media (min-width: 992px){
+    .o_navbar_apps_menu.show .dropdown-menu, .o_navbar_apps_menu.show .o-dropdown-menu{
+        background-color: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+    }
+    .as_sidebar_type_large .o_navbar + .o_action_manager {
+        padding-left: 0;
+    }
+}   
+
+@media (max-width: 992px){
+    .o_navbar_apps_menu.show .dropdown-menu, .o_navbar_apps_menu.show .o-dropdown-menu{
+        background-color: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+    }
+    .as_sidebar_type_large .o_navbar + .o_action_manager {
+        padding-left: 0;
+    }
+}

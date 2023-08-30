@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates>
+
+    <t t-name="addis_systems_base.TaxTotalsField" owl="1">
+        <table t-if="totals" class="oe_right">
+            <tbody>
+                <t t-foreach="totals.subtotals" t-as="subtotal" t-key="subtotal['name']">
+                    <tr>
+                        <td class="o_td_label">
+                            <t t-if="subtotal['name']== 'Subtotal'">
+                                <label class="o_form_label o_tax_total_label" t-esc="subtotal['name']"/>
+                            </t>
+                            <t t-if="subtotal['name']== 'Taxable Amount'">
+                                <t t-if="totals.taxable_amount != 0">
+                                    <label class="o_form_label o_tax_total_label" t-esc="subtotal['name']"/>
+                                </t>
+                            </t>
+                            <t t-if="subtotal['name']== 'Non Taxable Amount'">
+                                <t t-if="totals.non_taxable_amount != 0">
+                                    <label class="o_form_label o_tax_total_label" t-esc="subtotal['name']"/>
+                                </t>
+                            </t>
+                            <t t-if="subtotal['name']== 'Tax(15%)'">
+                                <t t-if="totals.tax_amount != 0">
+                                    <label class="o_form_label o_tax_total_label" t-esc="subtotal['name']"/>
+                                </t>
+                            </t>
+                        </td>
+                        <td>
+                            <t t-if="subtotal['name']== 'Subtotal'">
+                                <span t-att-name="subtotal['name']" style="white-space: nowrap; font-weight: bold;" t-out="subtotal['formatted_amount']"/>
+                            </t>
+                            <t t-if="subtotal['name']== 'Taxable Amount'">
+                                <t t-if="totals.taxable_amount != 0">
+                                    <span t-att-name="subtotal['name']" style="white-space: nowrap; font-weight: bold;" t-out="subtotal['taxable_amount_formatted']"/>
+                                </t>
+                            </t>
+                            <t t-if="subtotal['name']== 'Non Taxable Amount'">
+                                <t t-if="totals.non_taxable_amount != 0">
+                                    <span t-att-name="subtotal['name']" style="white-space: nowrap; font-weight: bold;" t-out="subtotal['nontaxable_amount_formatted']"/>
+                                </t>
+                            </t>
+                            <t t-if="subtotal['name']== 'Tax(15%)'">
+                                <t t-if="totals.tax_amount != 0">
+                                    <span t-att-name="subtotal['name']" style="white-space: nowrap; font-weight: bold;" t-out="subtotal['tax_amount_formatted']"/>
+                                </t>
+                            </t>
+                        </td>
+
+                    </tr>
+                </t>
+
+                <!-- Total amount with all taxes-->
+                <tr>
+                    <td class="o_td_label">
+                        <label class="o_form_label o_tax_total_label">Grand Total</label>
+                    </td>
+
+                    <td>
+                        <span
+                                name="grand_total_amount"
+                                t-att-class="Object.keys(totals.groups_by_subtotal).length > 0 ? 'oe_subtotal_footer_separator' : ''"
+                                t-out="totals.grand_total_amount_formatted"
+                                t-attf-style="{{ !totals.formatted_amount_total_rounded ? 'font-size: 1.3em; font-weight: bold; white-space: nowrap;' : 'font-size: 1em;' }}"
+                        />
+                    </td>
+                </tr>
+                <tr t-if="totals.formatted_amount_total_rounded">
+                    <td class="o_td_label">
+                        <label class="o_form_label o_tax_total_label">Total Rounded</label>
+                    </td>
+
+                    <td>
+                        <span
+                                t-out="totals.formatted_amount_total_rounded"
+                                style="white-space: nowrap; font-weight: bold; font-size: 1.3em;"
+                        />
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </t>
+</templates>

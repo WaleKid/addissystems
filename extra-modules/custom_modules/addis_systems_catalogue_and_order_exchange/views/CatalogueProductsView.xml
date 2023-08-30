@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="addis_systems_catalogue_products_form_view" model="ir.ui.view">
+            <field name="name">addis_systems_catalogue_and_order_exchange.addis_systems_catalogue_products.form</field>
+            <field name="model">purchase.catalogue.product</field>
+            <field name="arch" type="xml">
+                <form string="Catalogue Products">
+                    <sheet>
+                        <div class="oe_title">
+                            <label for="name"/>
+                            <h1>
+                                <field name="name" placeholder="Product Name" readonly="1"/>
+                            </h1>
+                        </div>
+                        <notebook>
+                            <page string="General Information" name="general_information">
+                                <group name="general_info" string="General Information's">
+                                    <group>
+                                        <label for="seller_id"/>
+                                        <div>
+                                            <field name="seller_id" readonly="1"/>
+                                        </div>
+                                        <label for="catalogue_request_id"/>
+                                        <div>
+                                            <field name="catalogue_request_id" readonly="1"/>
+                                        </div>
+                                        <label for="type"/>
+                                        <div>
+                                            <field name="type" readonly="1"/>
+                                        </div>
+                                        <label for="uom_id"/>
+                                        <div>
+                                            <field name="uom_id" readonly="1"/>
+                                        </div>
+                                    </group>
+                                    <group>
+                                        <label for="product_price"/>
+                                        <div>
+                                            <field name="product_price" readonly="1"/>
+                                        </div>
+                                        <label for="barcode"/>
+                                        <div>
+                                            <field name="barcode" readonly="1"/>
+                                        </div>
+                                        <label for="default_code"/>
+                                        <div>
+                                            <field name="default_code" readonly="1"/>
+                                        </div>
+                                        <label for="type"/>
+                                        <div name="inventory">
+                                            <field name="type" readonly="1"/>
+                                        </div>
+                                    </group>
+                                </group>
+                                <group name="inventory_info" string="Inventory Information's">
+                                    <group>
+                                        <label for="weight"/>
+                                        <div>
+                                            <field name="weight" readonly="1"/>
+                                        </div>
+                                        <label for="volume"/>
+                                        <div>
+                                            <field name="volume" readonly="1"/>
+                                        </div>
+                                        <label for="lead_time"/>
+                                        <div>
+                                            <field name="lead_time" readonly="1"/>
+                                        </div>
+                                    </group>
+                                    <group>
+                                        <label for="product_transferred"/>
+                                        <div>
+                                            <field name="product_transferred" readonly="1" widget="boolean_toggle"/>
+                                        </div>
+                                        <label for="product_tmpl"/>
+                                        <div>
+                                            <field name="product_tmpl" readonly="1"/>
+                                        </div>
+                                    </group>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids"/>
+                        <field name="activity_ids"/>
+                        <field name="message_ids" options="{'post_refresh': 'always'}"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="addis_systems_catalogue_products_tree_view" model="ir.ui.view">
+            <field name="name">addis_systems_catalogue_and_order_exchange.addis_systems_catalogue_products.tree</field>
+            <field name="model">purchase.catalogue.product</field>
+            <field name="arch" type="xml">
+                <tree string="Catalogue Products">
+                    <field name="name"/>
+                    <field name="type"/>
+                    <field name="uom_id"/>
+                    <field name="barcode"/>
+                    <field name="default_code"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="addis_systems_catalogue_products_search_view" model="ir.ui.view">
+            <field name="name">addis_systems_catalogue_and_order_exchange.addis_systems_catalogue_products.search</field>
+            <field name="model">purchase.catalogue.product</field>
+            <field name="arch" type="xml">
+                <search string="Catalogue Products">
+                    <group expand="1" string="Group By">
+                        <filter string="Active" name="state_active_filter" domain="[('active', '=', True)]"/>
+                        <separator/>
+                        <group expand="1" string="Group By">
+                            <filter string="Active" name="state_active_group" domain="[]" context="{'group_by': 'active'}"/>
+                        </group>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="addis_systems_catalogue_products_act_window" model="ir.actions.act_window">
+            <field name="name">Catalogue Products</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">purchase.catalogue.product</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    There is no Catalogue Products click New Button to add new.
+                </p>
+            </field>
+        </record>
+
+        <menuitem name="Catalogue Products" id="addis_systems_catalogue_products_menu" parent="addis_systems_catalogue_and_order_exchange.addis_systems_purchase_catalogue_menu" action="addis_systems_catalogue_products_act_window"
+                  sequence="100"/>
+
+
+    </data>
+</odoo>

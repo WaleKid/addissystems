@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="0">
+
+    <record id="payment_icon_cc_chapa" model="payment.icon">
+        <field name="sequence">120</field>
+        <field name="name">Chapa</field>
+        <field name="image" type="base64" file="addis_systems_payment_gateway/static/img/chapa.png"/>
+    </record>
+
+    <record id="payment_icon_cc_kifiya" model="payment.icon">
+        <field name="sequence">120</field>
+        <field name="name">Kifiya</field>
+        <field name="image" type="base64" file="addis_systems_invoice_exchange/static/img/kifiya.png"/>
+    </record>
+
+    <record id="payment_icon_cc_arifpay" model="payment.icon">
+        <field name="sequence">120</field>
+        <field name="name">Arif Pay</field>
+        <field name="image" type="base64" file="addis_systems_invoice_exchange/static/img/arifpay.png"/>
+    </record>
+
+    <record id="payment_icon_cc_amole" model="payment.icon">
+        <field name="sequence">120</field>
+        <field name="name">Amole</field>
+        <field name="image" type="base64" file="addis_systems_invoice_exchange/static/img/amole.png"/>
+    </record>
+
+    <record id="payment_icon_cc_hello_cash" model="payment.icon">
+        <field name="sequence">120</field>
+        <field name="name">Hello Cash</field>
+        <field name="image" type="base64" file="addis_systems_invoice_exchange/static/img/hellocash.jpeg"/>
+    </record>
+
+    <record id="payment_icon_cc_e_birr" model="payment.icon">
+        <field name="sequence">120</field>
+        <field name="name">ebirr</field>
+        <field name="image" type="base64" file="addis_systems_invoice_exchange/static/img/ebirr.png"/>
+    </record>
+
+    <record id="payment_icon_cc_m_birr" model="payment.icon">
+        <field name="sequence">120</field>
+        <field name="name">M-Birr</field>
+        <field name="image" type="base64" file="addis_systems_invoice_exchange/static/img/mbirr.png"/>
+    </record>
+
+    <record id="payment_icon_cc_kacha" model="payment.icon">
+        <field name="sequence">120</field>
+        <field name="name">Kacha</field>
+        <field name="image" type="base64" file="addis_systems_invoice_exchange/static/img/kacha.png"/>
+    </record>
+
+    <record id="payment_icon_cc_telebirr" model="payment.icon">
+        <field name="sequence">120</field>
+        <field name="name">Telebirr</field>
+        <field name="image" type="base64" file="addis_systems_invoice_exchange/static/img/telebirr.png"/>
+    </record>
+
+    <record id="payment_icon_cc_santim_pay" model="payment.icon">
+        <field name="sequence">120</field>
+        <field name="name">Santim Pay</field>
+        <field name="image" type="base64" file="addis_systems_invoice_exchange/static/img/santimpay.jpeg"/>
+    </record>
+
+    <record id="payment_icon_cc_addispay" model="payment.icon">
+        <field name="sequence">120</field>
+        <field name="name">Addis Pay</field>
+        <field name="image" type="base64" file="addis_systems_invoice_exchange/static/img/addispay.png"/>
+    </record>
+
+
+    <record id="payment_provider_chapa" model="payment.provider">
+        <field name="name">Chapa (Ethiopia)</field>
+        <field name="display_as">Chapa</field>
+        <field name="image_128" type="base64" file="addis_systems_invoice_exchange/static/img/chapa.png"/>
+        <field name="module_id" ref="base.module_payment_adyen"/>
+        <field name="payment_icon_ids"
+               eval="[(6, 0, [ref('addis_systems_invoice_exchange.payment_icon_cc_chapa')])]"/>
+    </record>
+
+    <record id="payment_provider_kifiya" model="payment.provider">
+        <field name="name">Kifiya (Ethiopia)</field>
+        <field name="display_as">Kifiya</field>
+        <field name="image_128" type="base64" file="addis_systems_invoice_exchange/static/img/kifiya.png"/>
+        <field name="module_id" ref="base.module_payment_adyen"/>
+        <field name="payment_icon_ids"
+               eval="[(6, 0, [ref('addis_systems_invoice_exchange.payment_icon_cc_kifiya')])]"/>
+    </record>
+
+    <record id="payment_provider_arif_pay" model="payment.provider">
+        <field name="name">Arif Pay (Ethiopia)</field>
+        <field name="display_as">Arif Pay</field>
+        <field name="image_128" type="base64" file="addis_systems_invoice_exchange/static/img/arifpay.png"/>
+        <field name="module_id" ref="base.module_payment_adyen"/>
+        <field name="payment_icon_ids"
+               eval="[(6, 0, [ref('addis_systems_invoice_exchange.payment_icon_cc_arifpay')])]"/>
+    </record>
+
+    <record id="payment_provider_amole" model="payment.provider">
+        <field name="name">Amole (Ethiopia)</field>
+        <field name="display_as">Amole (powered by Dashen Bank)</field>
+        <field name="image_128" type="base64" file="addis_systems_invoice_exchange/static/img/amole.png"/>
+        <field name="module_id" ref="base.module_payment_adyen"/>
+        <field name="payment_icon_ids"
+               eval="[(6, 0, [ref('addis_systems_invoice_exchange.payment_icon_cc_amole')])]"/>
+    </record>
+
+    <record id="payment_provider_hello_cash" model="payment.provider">
+        <field name="name">Hello Cash (Ethiopia)</field>
+        <field name="display_as">Hello Cash</field>
+        <field name="image_128" type="base64" file="addis_systems_invoice_exchange/static/img/hellocash.jpeg"/>
+        <field name="module_id" ref="base.module_payment_adyen"/>
+        <field name="payment_icon_ids"
+               eval="[(6, 0, [ref('addis_systems_invoice_exchange.payment_icon_cc_hello_cash')])]"/>
+    </record>
+
+    <record id="payment_provider_e_birr" model="payment.provider">
+        <field name="name">ebirr (Ethiopia)</field>
+        <field name="display_as">ebirr</field>
+        <field name="image_128" type="base64" file="addis_systems_invoice_exchange/static/img/ebirr.png"/>
+        <field name="module_id" ref="base.module_payment_adyen"/>
+        <field name="payment_icon_ids"
+               eval="[(6, 0, [ref('addis_systems_invoice_exchange.payment_icon_cc_e_birr')])]"/>
+    </record>
+
+    <record id="payment_provider_m_birr" model="payment.provider">
+        <field name="name">M-Birr (Ethiopia)</field>
+        <field name="display_as">M-Birr</field>
+        <field name="image_128" type="base64" file="addis_systems_invoice_exchange/static/img/mbirr.png"/>
+        <field name="module_id" ref="base.module_payment_adyen"/>
+        <field name="payment_icon_ids"
+               eval="[(6, 0, [ref('addis_systems_invoice_exchange.payment_icon_cc_m_birr')])]"/>
+    </record>
+
+    <record id="payment_provider_kacha" model="payment.provider">
+        <field name="name">Kacha (Ethiopia)</field>
+        <field name="display_as">Kacha</field>
+        <field name="image_128" type="base64" file="addis_systems_invoice_exchange/static/img/kacha.png"/>
+        <field name="module_id" ref="base.module_payment_adyen"/>
+        <field name="payment_icon_ids"
+               eval="[(6, 0, [ref('addis_systems_invoice_exchange.payment_icon_cc_kacha')])]"/>
+    </record>
+
+    <record id="payment_provider_telebirr" model="payment.provider">
+        <field name="name">Telebirr (Ethiopia)</field>
+        <field name="display_as">Telebirr</field>
+        <field name="image_128" type="base64" file="addis_systems_invoice_exchange/static/img/telebirr.png"/>
+        <field name="module_id" ref="base.module_payment_adyen"/>
+        <field name="payment_icon_ids"
+               eval="[(6, 0, [ref('addis_systems_invoice_exchange.payment_icon_cc_telebirr')])]"/>
+    </record>
+
+    <record id="payment_provider_santim_pay" model="payment.provider">
+        <field name="name">Santim Pay (Ethiopia)</field>
+        <field name="display_as">Santim Pay</field>
+        <field name="image_128" type="base64" file="addis_systems_invoice_exchange/static/img/santimpay.jpeg"/>
+        <field name="module_id" ref="base.module_payment_adyen"/>
+        <field name="payment_icon_ids"
+               eval="[(6, 0, [ref('addis_systems_invoice_exchange.payment_icon_cc_santim_pay')])]"/>
+    </record>
+
+    <record id="payment_provider_addis_pay" model="payment.provider">
+        <field name="name">Addis Pay (Ethiopia)</field>
+        <field name="display_as">Addis Pay (powered by Addis Systems)</field>
+        <field name="image_128" type="base64" file="addis_systems_invoice_exchange/static/img/addispay.png"/>
+        <field name="module_id" ref="base.module_payment_adyen"/>
+        <field name="payment_icon_ids"
+               eval="[(6, 0, [ref('addis_systems_invoice_exchange.payment_icon_cc_addispay')])]"/>
+    </record>
+
+    <record id="addis_systems_invoice_exchange.payment_provider_addis_pay" model="payment.provider">
+        <field name="inline_form_view_id" ref="addis_pay_inline_form"/>
+        <field name="allow_tokenization">True</field>
+    </record>
+
+</odoo>

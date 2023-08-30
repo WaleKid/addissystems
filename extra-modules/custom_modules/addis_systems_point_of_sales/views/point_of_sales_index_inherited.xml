@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <template id="addis_systems_title_branding" inherit_id="point_of_sale.index">
+            <xpath expr="//title" position="replace">
+                <title>Addis Systems POS</title>
+            </xpath>
+        </template>
+
+    </data>
+</odoo>

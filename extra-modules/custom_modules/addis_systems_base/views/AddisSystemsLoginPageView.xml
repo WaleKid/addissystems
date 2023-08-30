@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <template id="custom_bg_image" name="Frontend Layout Image" inherit_id="web.frontend_layout">
+            <xpath expr="//div[@id='wrapwrap']" position="attributes">
+                <attribute name="t-attf-style">#{"background: transparent url('/dashboard') no-repeat scroll center center / cover;" if response_template == 'web.login' or 'auth_signup.signup' else ''}</attribute>
+            </xpath>
+        </template>
+
+        <!--          Disable Database Selection and Management          -->
+
+        <template id="login_page_layout" inherit_id="web.login_layout" name="Login Page Layout">
+            <xpath expr="//div[@class='card-body']//div[last()]" position="replace"> <!-- Inherit With Warning-->
+                <div class="text-center small mt-4 pt-3 login--footer" t-if="not disable_footer">
+                    <t t-if="not disable_database_manager">
+                        <a class="border-end pe-2 me-1" href="/web/database/manager">Databases</a>
+                    </t>
+                    <a href="https://addissystems.et" target="_blank">Powered by
+                        <span>Addis Systems</span>
+                    </a>
+                </div>
+            </xpath>
+        </template>
+
+        <template id="login_page_super_login_replace" inherit_id="web.login" name="Login Page Layout">
+            <xpath expr="//button[@name='redirect']" position="replace"/>
+        </template>
+
+
+    </data>
+</odoo>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <t t-name="OrderReceiptTinNumber" t-inherit="point_of_sale.PartnerDetailsEdit" t-inherit-mode="extension" owl="1">
+        <xpath expr="//div[@class='partner-details-box clearfix']/div[@class='partner-details-left']" position="replace">
+            <div class="partner-details-left">
+                <div class="partner-detail">
+                    <span class="label">E-mail</span>
+                    <input class="detail" name="email" type="email"
+                           t-on-change="captureChange"
+                           t-att-value="props.partner.email || ''"/>
+                </div>
+                <div class="partner-detail">
+                    <span class="label">Tin No</span>
+                    <input class="detail vat" name="vat" type="vat"
+                           t-on-change="captureChange"
+                           t-att-value="props.partner.vat || ''"/>
+                </div>
+            </div>
+        </xpath>
+        <xpath expr="//div[@class='partner-details-box clearfix']/div[@class='partner-details-right']" position="replace">
+            <div class="partner-details-right">
+                <div class="partner-detail">
+                    <span class="label">Phone Number</span>
+                    <input class="detail" name="phone" type="tel"
+                           t-on-change="captureChange"
+                           t-att-value="props.partner.phone || ''"/>
+                </div>
+                <div class="partner-detail">
+                    <span class="label">Address</span>
+                    <input class="detail" name="city" type="city"
+                           t-on-change="captureChange"
+                           t-att-value="props.partner.city || ''"/>
+                </div>
+            </div>
+        </xpath>
+    </t>
+
+    <t t-name="DisplayCustomerTinNumberHeader" t-inherit="point_of_sale.PartnerListScreen" t-inherit-mode="extension" owl="1">
+        <xpath expr="//th[@t-if='isBalanceDisplayed']" position="after">
+            <th>Tin Number</th>
+        </xpath>
+        <xpath expr="//th[@t-if='env.isMobile']" position="replace"/>
+     </t>
+
+    <t t-name="DisplayCustomerTinNumberLine" t-inherit="point_of_sale.PartnerLine" t-inherit-mode="extension" owl="1">
+        <xpath expr="//tr[@t-attf-class='partner-line {{highlight}}']/td[5]" position="after">
+            <td class="partner-line-email ">
+                <t t-esc="props.partner.vat or ''"/>
+                <span t-if="highlight"><br/></span>
+            </td>
+        </xpath>
+
+        <xpath expr="////tr[@t-attf-class='partner-line {{highlight}}']/td[@t-if='env.isMobile']" position="replace"/>
+     </t>
+
+</templates>

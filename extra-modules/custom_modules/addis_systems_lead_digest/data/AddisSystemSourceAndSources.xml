@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+
+        <record model="res.config.settings" id="addis_systems_setting_setter">
+            <field name="group_use_lead" eval="1"/>
+            <field name="group_sale_order_template" eval="1"/>
+            <field name="group_uom" eval="1"/>
+        </record>
+
+        <function name="execute" model="res.config.settings">
+            <value eval="[ref('addis_systems_setting_setter')]"/>
+        </function>
+
+        <record model="utm.source" id="addis_systems_utm_source">
+            <field name="name">Addis Systems Website</field>
+        </record>
+
+        <record id="addis_systems_utm_campaign" model="utm.campaign">
+            <field name="name">Addis Systems Website Leads</field>
+            <field name="user_id" ref="base.user_admin"/>
+        </record>
+
+        <!-- UOM Categories -->
+
+        <record id="product_uom_categ_memory" model="uom.category">
+            <field name="name">Memory</field>
+        </record>
+
+         <!-- UOM.UOM -->
+            <!-- Units -->
+        <record id="product_uom_memory_mb" model="uom.uom">
+            <field name="category_id" ref="product_uom_categ_memory"/>
+            <field name="name">Megabyte</field>
+            <field name="factor" eval="1"/>
+            <field name="uom_type">reference</field>
+        </record>
+
+        <record id="product_uom_memory_kb" model="uom.uom">
+            <field name="category_id" ref="product_uom_categ_memory"/>
+            <field name="name">kilobyte</field>
+            <field name="factor" eval="1000"/>
+            <field name="uom_type">smaller</field>
+        </record>
+
+        <record id="product_uom_memory_gb" model="uom.uom">
+            <field name="category_id" ref="product_uom_categ_memory"/>
+            <field name="name">Gigabyte</field>
+            <field name="factor" eval="0.001"/>
+            <field name="uom_type">bigger</field>
+        </record>
+
+        <record id="product_uom_memory_tb" model="uom.uom">
+            <field name="category_id" ref="product_uom_categ_memory"/>
+            <field name="name">Terabyte</field>
+            <field name="factor" eval="1.0"/>
+            <field name="uom_type">bigger</field>
+        </record>
+
+        <record id="product_uom_memory_pb" model="uom.uom">
+            <field name="category_id" ref="product_uom_categ_memory"/>
+            <field name="name">Petabyte</field>
+            <field name="factor" eval="1.0"/>
+            <field name="uom_type">bigger</field>
+        </record>
+
+
+        <!-- Products Category-->
+
+        <record id="as_service_product_category" model="product.category">
+            <field name="parent_id" ref="product.product_category_1"/>
+            <field name="name">Addis Systems Services</field>
+        </record>
+
+        <record id="as_service_spec_product_category" model="product.category">
+            <field name="parent_id" ref="product.product_category_1"/>
+            <field name="name">Addis Systems Product Spec</field>
+        </record>
+
+        <!-- Service products -->
+
+        <record id="as_ssl_product" model="product.product">
+            <field name="name">Domain Name SSL</field>
+            <field name="categ_id" ref="as_service_product_category"/>
+            <field name="standard_price">1</field>
+            <field name="list_price">1</field>
+            <field name="detailed_type">service</field>
+            <field name="uom_id" ref="uom.product_uom_day"/>
+            <field name="uom_po_id" ref="uom.product_uom_day"/>
+            <field name="default_code">SSL</field>
+            <field name="image_1920" type="base64" file="addis_systems_lead_digest/static/src/img/ssl.png"/>
+        </record>
+
+        <!-- Physical Products -->
+        <record id="as_domain_name_product" model="product.product">
+            <field name="name">Domain Name</field>
+            <field name="categ_id" ref="as_service_spec_product_category"/>
+            <field name="standard_price">1</field>
+            <field name="list_price">1</field>
+            <field name="detailed_type">product</field>
+            <field name="uom_id" ref="uom.product_uom_day"/>
+            <field name="uom_po_id" ref="uom.product_uom_day"/>
+            <field name="default_code">WWW</field>
+            <field name="image_1920" type="base64" file="addis_systems_lead_digest/static/src/img/domain_name.png"/>
+        </record>
+
+        <record id="as_hdd_space_spec_product" model="product.product">
+            <field name="name">Storage Space</field>
+            <field name="categ_id" ref="as_service_spec_product_category"/>
+            <field name="standard_price">1</field>
+            <field name="list_price">1</field>
+            <field name="detailed_type">product</field>
+            <field name="uom_id" ref="addis_systems_lead_digest.product_uom_memory_gb"/>
+            <field name="uom_po_id" ref="addis_systems_lead_digest.product_uom_memory_gb"/>
+            <field name="default_code">HDD</field>
+            <field name="image_1920" type="base64" file="addis_systems_lead_digest/static/src/img/hdd.jpg"/>
+        </record>
+
+        <record id="as_ram_space_spec_product" model="product.product">
+            <field name="name">RAM</field>
+            <field name="categ_id" ref="as_service_spec_product_category"/>
+            <field name="standard_price">1</field>
+            <field name="list_price">1</field>
+            <field name="detailed_type">product</field>
+            <field name="uom_id" ref="addis_systems_lead_digest.product_uom_memory_gb"/>
+            <field name="uom_po_id" ref="addis_systems_lead_digest.product_uom_memory_gb"/>
+            <field name="default_code">RAM</field>
+            <field name="image_1920" type="base64" file="addis_systems_lead_digest/static/src/img/ram.png"/>
+        </record>
+
+        <!-- Addis Systems Quotation Template -->
+
+        <record id="as_service_offer_template" model="sale.order.template">
+            <field name="name">Addis Systems Quotation Template</field>
+            <field name="number_of_days">0</field>
+            <field name="require_signature">True</field>
+            <field name="require_payment">True</field>
+        </record>
+
+        <record id="as_service_offer_template_domain" model="sale.order.template.line">
+            <field name="sale_order_template_id" ref="as_service_offer_template"/>
+            <field name="name">Domain Name</field>
+            <field name="product_id" ref="as_domain_name_product"/>
+            <field name="product_uom_qty">1</field>
+            <field name="product_uom_id" ref="uom.product_uom_day"/>
+        </record>
+
+        <record id="as_service_offer_template_ssl" model="sale.order.template.line">
+            <field name="sale_order_template_id" ref="as_service_offer_template"/>
+            <field name="name">Domain Name SSL</field>
+            <field name="product_id" ref="as_ssl_product"/>
+            <field name="product_uom_qty">1</field>
+            <field name="product_uom_id" ref="uom.product_uom_day"/>
+        </record>
+
+        <record id="as_service_offer_template_hdd" model="sale.order.template.line">
+            <field name="sale_order_template_id" ref="as_service_offer_template"/>
+            <field name="name">Server Hard Disk Space</field>
+            <field name="product_id" ref="as_hdd_space_spec_product"/>
+            <field name="product_uom_qty">1</field>
+            <field name="product_uom_id" ref="addis_systems_lead_digest.product_uom_memory_gb"/>
+        </record>
+
+        <record id="as_service_offer_template_ram" model="sale.order.template.line">
+            <field name="sale_order_template_id" ref="as_service_offer_template"/>
+            <field name="name">Server RAM Allocation</field>
+            <field name="product_id" ref="as_ram_space_spec_product"/>
+            <field name="product_uom_qty">1</field>
+            <field name="product_uom_id" ref="addis_systems_lead_digest.product_uom_memory_gb"/>
+        </record>
+
+    </data>
+</odoo>

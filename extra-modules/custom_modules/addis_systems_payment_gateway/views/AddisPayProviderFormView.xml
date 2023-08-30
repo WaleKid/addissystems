@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="payment_provider_form" model="ir.ui.view">
+        <field name="name">Addispay Provider Form</field>
+        <field name="model">payment.provider</field>
+        <field name="inherit_id" ref="payment.payment_provider_form"/>
+        <field name="arch" type="xml">
+            <group name="provider_credentials" position='inside'>
+                <group attrs="{'invisible': [('code', '!=', 'addispay')]}">
+                    <field name="addispay_merchant_account" attrs="{'required':[('code', '=', 'addispay'), ('state', '!=', 'disabled')]}"/>
+                    <field name="addispay_api_key" attrs="{'required':[('code', '=', 'addispay'), ('state', '!=', 'disabled')]}" password="True"/>
+                    <field name="addispay_client_key" attrs="{'required':[('code', '=', 'addispay'), ('state', '!=', 'disabled')]}"/>
+                    <field name="addispay_hmac_key" attrs="{'required':[('code', '=', 'addispay'), ('state', '!=', 'disabled')]}" password="True"/>
+                    <field name="addispay_checkout_api_url" attrs="{'required':[('code', '=', 'addispay'), ('state', '!=', 'disabled')]}"/>
+                    <field name="addispay_recurring_api_url" attrs="{'required':[('code', '=', 'addispay'), ('state', '!=', 'disabled')]}"/>
+                </group>
+            </group>
+            <group name="provider_config" position='before'>
+                <div attrs="{'invisible':['|', ('code', '!=', 'addispay'), ('capture_manually', '=', False)]}"
+                     class="alert alert-warning"
+                     role="alert">
+                    <strong>Warning:</strong> To capture the amount manually, you also need to set
+                    the Capture Delay to manual on your AddisPay account settings.
+                    <a href="https://addissystems.et"
+                       title="Learn More"
+                       target="_blank">Learn More</a>
+                </div>
+            </group>
+        </field>
+    </record>
+
+</odoo>

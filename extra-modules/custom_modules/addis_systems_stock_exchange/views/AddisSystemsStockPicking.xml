@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="addis_systems_stock_picking_form_inherit" model="ir.ui.view">
+            <field name="name">addis_systems_stock_exchange.addis_systems_stock_picking.form</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.view_picking_form"/>
+            <field name="priority" eval="8"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='state']" position="replace">
+                    <field name="picking_type" invisible="1"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,assigned,on_delivery,done"/>
+                </xpath>
+                <xpath expr="//field[@name='backorder_id']" position="after">
+                    <field name="dispatch_reference_number" readonly="1" attrs="{'invisible': ['|', ('state','!=','on_delivery'),('picking_type', '!=', 'outgoing')]}"/>
+                    <field name="dispatch_reference_number" string="Customer Dispatch Reference" readonly="1" attrs="{'invisible': ['|', ('state','!=','on_delivery'),('picking_type', '!=', 'incoming')]}"/>
+                </xpath>
+                <xpath expr="//header/button[@name='action_open_label_type']" position="before">
+                    <button name="confirm_inventory_receipt" class="oe_highlight" string='Confirm Receipt' type='object' attrs="{'invisible': ['|',('state', '!=', 'on_delivery'),('picking_type', '!=', 'incoming')]}"/>
+                </xpath>
+<!--                <xpath expr="//field[@name='example_field']" position="attributes">-->
+<!--                    <attribute name="invisible">True</attribute>-->
+<!--                </xpath>-->
+            </field>
+        </record>
+    </data>
+</odoo>

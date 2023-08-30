@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="0">
+
+    <record id="payment_icon_cc_addispay" model="payment.icon">
+        <field name="sequence">120</field>
+        <field name="name">Addis Pay</field>
+        <field name="image" type="base64" file="addis_systems_payment_gateway/static/img/addispay.png"/>
+    </record>
+
+    <record id="payment_icon_cc_telebirr" model="payment.icon">
+        <field name="sequence">120</field>
+        <field name="name">Telebirr</field>
+        <field name="image" type="base64" file="addis_systems_payment_gateway/static/img/telebirr.png"/>
+    </record>
+
+
+    <record id="payment_provider_addis_pay" model="payment.provider">
+        <field name="name">Addis Pay (Ethiopia)</field>
+        <field name="display_as">Addis Pay (powered by Addis Systems)</field>
+        <field name="image_128" type="base64" file="addis_systems_payment_gateway/static/description/icon.png"/>
+        <field name="module_id" ref="base.module_payment_adyen"/>
+        <!-- https://www.adyen.com/payment-methods -->
+        <field name="payment_icon_ids"
+               eval="[(6, 0, [
+                   ref('addis_systems_payment_gateway.payment_icon_cc_addispay'),
+                   ref('addis_systems_payment_gateway.payment_icon_cc_telebirr'),
+               ])]"/>
+    </record>
+
+    <record id="payment_provider_aps" model="payment.provider">
+        <field name="name">Amazon Payment Services</field>
+        <field name="display_as">Amazon Payment Services</field>
+        <field name="image_128" type="base64" file="payment_aps/static/description/icon.png"/>
+        <field name="module_id" ref="base.module_payment_aps"/>
+        <!-- https://paymentservices.amazon.com/docs/EN/24.html -->
+        <field name="payment_icon_ids"
+               eval="[(6, 0, [
+                        ref('payment.payment_icon_cc_mastercard'),
+                        ref('payment.payment_icon_cc_visa'),
+                        ref('payment.payment_icon_sadad'),
+                        ref('payment.payment_icon_mada'),
+                    ])]"/>
+    </record>
+
+    <record id="addis_systems_payment_gateway.payment_provider_addis_pay" model="payment.provider">
+        <field name="code">addispay</field>
+        <field name="inline_form_view_id" ref="addis_pay_inline_form"/>
+        <field name="allow_tokenization">True</field>
+    </record>
+
+</odoo>
