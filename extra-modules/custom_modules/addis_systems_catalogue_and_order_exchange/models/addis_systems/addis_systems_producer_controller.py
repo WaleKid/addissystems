@@ -61,8 +61,6 @@ def send_request_for_catalogue_order(rfc_id, partner):
         }
     }
 
-    print(rfc_data)
-
     try:
         client = pulsar.Client("pulsar://196.189.124.178:6650")
     except Exception as e:

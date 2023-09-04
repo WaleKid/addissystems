@@ -11,7 +11,7 @@
     'author': 'Addis Systems/Beruk W.',
     'website': 'https://www.addissystems.et/',
     'license': 'LGPL-3',
-    'depends': ['base', 'web', 'addis_systems_base', 'contacts', 'om_account_accountant', 'sale_management', 'purchase', 'point_of_sale'],
+    'depends': ['base', 'web', 'addis_systems_base', 'contacts', 'base_geolocalize', 'om_account_accountant', 'sale_management', 'purchase', 'point_of_sale'],
     'external_dependencies': {
         'python': ['pulsar-client', 'avro', 'avro-schema']
     },

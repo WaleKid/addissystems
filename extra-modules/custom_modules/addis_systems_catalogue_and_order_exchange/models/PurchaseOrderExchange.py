@@ -65,8 +65,6 @@ class AddisSystemsRequestForCatalogue(models.Model):
         tenants_list_url = "http://196.189.124.178:8080/admin/v2/tenants"
         tenants_list = requests.get(tenants_list_url, timeout=TIMEOUT)
 
-        print(tenants_list_url)
-
         for partner in self.partner_ids:
             rfc_send = None
             if str(partner.name).replace(' ', '').lower() in tenants_list.json():

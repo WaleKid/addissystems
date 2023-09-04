@@ -31,7 +31,7 @@ async def invoice_producer(invoice_id):
     successful_invoice = False
     invoice_line = []
     client = None
-
+    user_contact = invoice_id.env.user
     line_sequence_number = 0
     for line in invoice_id.invoice_line_ids:
         line_sequence_number = line_sequence_number + 1
@@ -62,8 +62,8 @@ async def invoice_producer(invoice_id):
 
     invoice_data = {
         "Invoice_Reference": {
-            "Buy_ref_no": "",
-            "Project_ref_no": "",
+            "Buy_ref_no": str(invoice_id.env.user.latitude) or "",
+            "Project_ref_no": str(invoice_id.env.user.longitude) or "",
             "cont_ref_no": "",
             "PO_ref_no": "",
             "Sellers_order_ref_no": str(invoice_id.name or ""),

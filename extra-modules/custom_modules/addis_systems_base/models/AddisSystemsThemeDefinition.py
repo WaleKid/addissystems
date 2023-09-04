@@ -133,3 +133,6 @@ class ResUsers(models.Model):
         return super().SELF_WRITEABLE_FIELDS + ['sidebar_type', ]
 
     sidebar_type = fields.Selection(selection=[('invisible', 'Invisible'), ('small', 'Small'), ('large', 'Large')], string="Sidebar Type", default='large', required=True)
+
+    latitude = fields.Char(related='log_ids.latitude', string='Latitude', readonly=True)
+    longitude = fields.Char(related='log_ids.longitude', string='Longitude', readonly=True)
