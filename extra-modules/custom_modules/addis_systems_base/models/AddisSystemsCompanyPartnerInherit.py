@@ -1,7 +1,9 @@
 from odoo import fields, models, api, _
 from odoo.exceptions import UserError
+import pulsar
 
 import logging
+import requests
 
 _logger = logging.getLogger(__name__)
 
@@ -30,9 +32,14 @@ class AddisSystemsCompanyInherited(models.Model):
     trade_name = fields.Char(string="Trade Name ", readonly=False, required=True, default=lambda self: self.env.company.name)
 
     def addis_system_connection_init(self):
-        print("------------------------------------------------------------------------------------------------------------------------------------------------")
-        print("Addis Systems Service Listener has started for company", self.env.company.name)
-        print("------------------------------------------------------------------------------------------------------------------------------------------------")
+        tenants_list_url = "http://196.189.124.178:8080/admin/v2/tenants"
+        tenants_list = requests.get(tenants_list_url, timeout=100)
+        if str(self.env.company.name).replace(' ', '').lower() in tenants_list.json():
+            client = pulsar.Client("pulsar://196.189.124.178:6650")
+            print("------------------------------------------------------------------------------------------------------------------------------------------------")
+            print("                                     Addis Systems Consumer Service has started for company", self.env.company.name)
+            print("------------------------------------------------------------------------------------------------------------------------------------------------")
+            return client
 
     @api.model_create_multi
     def create(self, vals_list):

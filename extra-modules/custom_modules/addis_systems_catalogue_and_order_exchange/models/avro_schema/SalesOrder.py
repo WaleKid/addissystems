@@ -2,72 +2,6 @@ sales_order_schema = {
     "type": "record",
     "name": "SalesOrder",
     "fields": [{
-        "name": "Sales_Order_ref",
-        "type": [{
-            "type": "record",
-            "name": "Sales_Order_ref",
-            "fields": [{
-                "name": "PO_State",
-                "type": "string"
-            }, {
-                "name": "RFQ_ref_no",
-                "type": "string"
-            }, {
-                "name": "Rec_advice_ref_no",
-                "type": "string"
-            }, {
-                "name": "SO_ref_no",
-                "type": "string"
-            }]
-        }]
-    }, {
-        "name": "Sales_Order_Desc",
-        "type": [{
-            "type": "record",
-            "name": "Sales_Order_Desc",
-            "fields": [{
-                "name": "Customer_Order_Ref",
-                "type": "string"
-            }, {
-                "name": "Order_deadline",
-                "type": "string"
-            }, {
-                "name": "Receipt_Dt",
-                "type": "string"
-            }, {
-                "name": "SO_exchange",
-                "type": "string"
-            }, {
-                "name": "SO_no",
-                "type": "string"
-            }, {
-                "name": "Sales_Order_Type",
-                "type": "string"
-            }]
-        }]
-    }, {
-        "name": "Seller",
-        "type": [{
-            "type": "record",
-            "name": "Seller",
-            "fields": [{
-                "name": "company_name",
-                "type": "string"
-            }, {
-                "name": "licence_number",
-                "type": "string"
-            }, {
-                "name": "tin_no",
-                "type": "string"
-            }, {
-                "name": "vat_reg_Dt",
-                "type": "string"
-            }, {
-                "name": "vat_reg_no",
-                "type": "string"
-            }]
-        }]
-    }, {
         "name": "Buyer",
         "type": [{
             "type": "record",
@@ -115,8 +49,135 @@ sales_order_schema = {
             }]
         }]
     }, {
+        "name": "Order_line",
+        "type": [{
+            "type": "array",
+            "items": ["null", {
+                "type": "record",
+                "name": "Order_line",
+                "fields": [{
+                    "name": "HSNcode",
+                    "type": "string"
+                }, {
+                    "name": "Line_charge_amount",
+                    "type": "string"
+                }, {
+                    "name": "Line_charge_code",
+                    "type": "string"
+                }, {
+                    "name": "Line_charge_reason",
+                    "type": "string"
+                }, {
+                    "name": "Product_Description",
+                    "type": "string"
+                }, {
+                    "name": "Product_Name",
+                    "type": "string"
+                }, {
+                    "name": "Product_price",
+                    "type": "string"
+                }, {
+                    "name": "Product_qty",
+                    "type": "string"
+                }, {
+                    "name": "Product_unit",
+                    "type": "string"
+                }, {
+                    "name": "Total_Price",
+                    "type": "string"
+                }, {
+                    "name": "sequence",
+                    "type": "string"
+                }, {
+                    "name": "tax_amount",
+                    "type": "string"
+                }, {
+                    "name": "tax_amount_type",
+                    "type": "string"
+                }, {
+                    "name": "tax_scope",
+                    "type": "string"
+                }, {
+                    "name": "tax_type",
+                    "type": "string"
+                }]
+            }]
+        }]
+    }, {
+        "name": "Sales_Order_Desc",
+        "type": [{
+            "type": "record",
+            "name": "Sales_Order_Desc",
+            "fields": [{
+                "name": "Exchange_Title",
+                "type": "string"
+            }, {
+                "name": "Order_deadline",
+                "type": "string"
+            }, {
+                "name": "Receipt_Dt",
+                "type": "string"
+            }, {
+                "name": "SO_no",
+                "type": "string"
+            }, {
+                "name": "Sales_Order_Type",
+                "type": "string"
+            }]
+        }]
+    }, {
+        "name": "Sales_Order_ref",
+        "type": [{
+            "type": "record",
+            "name": "Sales_Order_ref",
+            "fields": [{
+                "name": "CAT_ref_no",
+                "type": "string"
+            }, {
+                "name": "Customer_PO_ref_no",
+                "type": "string"
+            }, {
+                "name": "Rec_advice_ref_no",
+                "type": "string"
+            }, {
+                "name": "SO_State",
+                "type": "string"
+            }, {
+                "name": "SO_ref_no",
+                "type": "string"
+            }]
+        }]
+    }, {
         "name": "Sales_total",
         "type": "string"
+    }, {
+        "name": "Seller",
+        "type": [{
+            "type": "record",
+            "name": "Seller",
+            "fields": [{
+                "name": "address",
+                "type": "string"
+            }, {
+                "name": "company_name",
+                "type": "string"
+            }, {
+                "name": "email",
+                "type": "string"
+            }, {
+                "name": "location",
+                "type": "string"
+            }, {
+                "name": "phone_no",
+                "type": "string"
+            }, {
+                "name": "tin_no",
+                "type": "string"
+            }, {
+                "name": "vat_reg_no",
+                "type": "string"
+            }]
+        }]
     }, {
         "name": "Vat_breakdown",
         "type": [{
@@ -134,49 +195,6 @@ sales_order_schema = {
             }, {
                 "name": "Vat_reason_text",
                 "type": "string"
-            }]
-        }]
-    }, {
-        "name": "Order_line",
-        "type": [{
-            "type": "array",
-            "items": [{
-                "type": "record",
-                "name": "Order_line",
-                "fields": [{
-                    "name": "Line_charge_amount",
-                    "type": "string"
-                }, {
-                    "name": "Line_charge_code",
-                    "type": "string"
-                }, {
-                    "name": "Line_charge_reason",
-                    "type": "string"
-                }, {
-                    "name": "hsncode",
-                    "type": "string"
-                }, {
-                    "name": "item_name",
-                    "type": "string"
-                }, {
-                    "name": "price",
-                    "type": "string"
-                }, {
-                    "name": "qty",
-                    "type": "string"
-                }, {
-                    "name": "sno",
-                    "type": "string"
-                }, {
-                    "name": "tax",
-                    "type": "string"
-                }, {
-                    "name": "total_price",
-                    "type": "string"
-                }, {
-                    "name": "unit",
-                    "type": "string"
-                }]
             }]
         }]
     }]

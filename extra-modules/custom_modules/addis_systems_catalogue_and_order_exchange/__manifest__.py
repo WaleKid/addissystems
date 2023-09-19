@@ -11,12 +11,14 @@
     'author': 'Addis Systems/Beruk W.',
     'website': 'https://www.addissystems.et/',
     'license': 'LGPL-3',
-    'depends': ['base', 'web', 'addis_systems_base', 'contacts', 'stock', 'sale_management', 'purchase'],
+    'depends': ['base', 'web', 'addis_systems_base', 'contacts', 'stock', 'sale_management', 'purchase', 'purchase_requisition'],
     'external_dependencies': {
         'python': ['pulsar-client', 'avro', 'avro-schema']
     },
     'data': [
         'security/ir.model.access.csv',
+        'data/CatalogueSequenceData.xml',
+        'data/PurchaseAggrementsData.xml',
         'views/PurchaseOrderInheritedView.xml',
         'views/SalesOrderInheritedView.xml',
         'views/CatalogueView.xml',
@@ -24,7 +26,6 @@
         'views/CatalogueRequestView.xml',
         'views/CatalogueQuotationsView.xml',
         'views/CatalogueProductsView.xml',
-        'data/CatalogueSequenceData.xml',
         'wizards/CatalogueQuotationCreateWizardView.xml'
     ],
     'assets': {

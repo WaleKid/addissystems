@@ -15,17 +15,22 @@
                 <form string="Catalogue Request">
                     <header>
                         <button name="action_create_catalogue_quotation" string="Create Quotation"
-                                attrs="{'invisible': [('child_catalogue_quotation_count', '!=', 0)]}"
+                                attrs="{'invisible': ['|', '|', '|', ('child_catalogue_quotation_count', '!=', 0), ('expired', '=', True), ('trade_terms', '=', 'blanket'), ('state', '=', 'canceled')]}"
                                 type="object" class="oe_highlight" data-hotkey="w" title="Create Quotation"/>
-                        <field name="state" widget="statusbar" statusbar_visible="new,quoted,sent"/>
+                        <button name="action_create_blanket_order" string="Create Blanket Order"
+                                attrs="{'invisible': ['|', '|', '|', ('child_catalogue_quotation_count', '!=', 0), ('expired', '=', True), ('trade_terms', '!=', 'blanket'), ('state', '=', 'canceled')]}"
+                                type="object" class="oe_highlight" data-hotkey="w" title="Create Blanket Order"/>
+                        <button name="cancel_catalogue_request" string='Cancel' type='object' attrs="{'invisible': [('state', 'in', ['sent', 'canceled'])]}"/>
+                        <field name="state" widget="statusbar" statusbar_visible="new,quoted,sent,canceled"/>
                     </header>
                     <sheet>
                         <widget name="web_ribbon" title="Quoted" bg_color="bg-info" attrs="{'invisible': [('state', '!=', 'quoted')]}"/>
                         <widget name="web_ribbon" title="Sent" attrs="{'invisible': [('state', '!=', 'sent')]}"/>
+                        <widget name="web_ribbon" title="Canceled" bg_color="bg-danger" attrs="{'invisible': [('state', '!=', 'canceled')]}"/>
                         <div class="oe_button_box" name="button_box">
                             <button class="oe_stat_button" name="%(template_open_child_catalogue_quotation)d" type="action"
-                                    icon="fa-list-alt" attrs="{'invisible': [('child_catalogue_quotation_count', '=', 0)]}">
-                                <field string="Quotations" name="child_catalogue_quotation_count" widget="statinfo"/>
+                                    icon="fa-book" attrs="{'invisible': [('child_catalogue_quotation_count', '=', 0)]}">
+                                <field string="Catalogues" name="child_catalogue_quotation_count" widget="statinfo"/>
                             </button>
                             <button class="oe_stat_button" attrs="{'invisible': [('child_catalogue_quotation_count', '=', 0)]}"/>
                         </div>
@@ -38,30 +43,37 @@
                         <group>
                             <group>
                                 <field name="partner_id" readonly="1"/>
+                                <field name="trade_terms" readonly="1"/>
                                 <field name="partner_rfc_reference" readonly="1"/>
-                                <field name="pass_to_prospective_customer" widget="boolean_toggle" readonly="1"/>
                             </group>
                             <group>
+                                <field name="pass_to_prospective_customer" widget="boolean_toggle" readonly="1"/>
                                 <field name="catalogue_with_price" widget="boolean_toggle" readonly="1"/>
                                 <field name="requested_date" readonly="1" requied="1"/>
                                 <field name="expire_date" readonly="1" requied="1"/>
-                                <field name="trade_terms" readonly="1"/>
+                                <field name="expired" invisible="1"/>
                             </group>
                         </group>
-                        <div class="row mt16 o_settings_container">
-                            <div>
-                                <strong>
-                                    <label for="descriptive_literature"/>
-                                </strong>
-                                <field name="descriptive_literature" widget="html" class="oe-bordered-editor" nolabel="1" requied="1" readonly="1"/>
-                            </div>
-                            <div>
-                                <strong>
-                                    <label for="condition"/>
-                                </strong>
-                                <field name="condition" widget="html" nolabel="1" class="oe-bordered-editor" readonly="1"/>
-                            </div>
-                        </div>
+                        <notebook>
+                            <page string="Descriptive Literature" name="descriptive_literature">
+                                <div>
+                                    <field name="descriptive_literature" widget="html" class="oe-bordered-editor" nolabel="1" requied="1" readonly="1"/>
+                                </div>
+                                <span>
+                                    <strong>Note:</strong>
+                                    Description on requested products specifications and other product attributes in detail
+                                </span>
+                            </page>
+                            <page string="Other Conditions" name="condition">
+                                <div>
+                                    <field name="condition" widget="html" nolabel="1" class="oe-bordered-editor" readonly="1"/>
+                                </div>
+                                <span>
+                                    <strong>Note:</strong>
+                                    Description on other conditions and related descriptions on the trade terms information
+                                </span>
+                            </page>
+                        </notebook>
                     </sheet>
                     <div class="oe_chatter">
                         <field name="message_follower_ids"/>
@@ -76,14 +88,14 @@
             <field name="name">addis_systems_catalogue_and_order_exchange.sale_order_catalogue_request.tree.view</field>
             <field name="model">sale.order.catalogue_request</field>
             <field name="arch" type="xml">
-                <tree string="Catalogue Request">
+                <tree string="Catalogue Request" decoration-info="trade_terms == 'blanket'" decoration-success="trade_terms == 'retail'" decoration-danger="state == 'canceled'">
                     <field name="name"/>
                     <field name="partner_rfc_reference"/>
                     <field name="requested_date" readonly="1"/>
                     <field name="expire_date" readonly="1"/>
                     <field name="pass_to_prospective_customer" widget="boolean_toggle" readonly="1"/>
                     <field name="trade_terms"/>
-                    <field name="state" widget="badge" decoration-muted="state == 'new'" decoration-info="state == 'quoted'" decoration-success="state == 'sent'"/>
+                    <field name="state" widget="badge" decoration-muted="state == 'new'" decoration-info="state == 'quoted'" decoration-success="state == 'sent'" decoration-danger="state == 'canceled'"/>
                 </tree>
             </field>
         </record>
@@ -136,6 +148,7 @@
                     <filter string="Draft" name="state_draft_filter" domain="[('state', '=', 'new')]"/>
                     <filter string="Quoted" name="state_quoted_filter" domain="[('state', '=', 'quoted')]"/>
                     <filter string="Sent" name="state_sent_filter" domain="[('state', '=', 'sent')]"/>
+                    <filter string="Canceled" name="state_canceled_filter" domain="[('state', '=', 'canceled')]"/>
                     <separator/>
                     <filter string="Today" name="today" domain="[('expire_date', '&gt;=', context_today())]"/>
                     <filter string="This Week" name="this_week"
@@ -145,6 +158,7 @@
                     <separator/>
                     <group expand="1" string="Group By">
                         <filter string="State" name="state_draft_group" domain="[]" context="{'group_by':'state'}"/>
+                        <filter string="Trade Term" name="state_term_group" domain="[]" context="{'group_by':'trade_terms'}"/>
                     </group>
                 </search>
             </field>
@@ -186,8 +200,8 @@
             <field name="name">Catalogue Request</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">sale.order.catalogue_request</field>
-            <field name="view_mode">kanban,tree,form,calendar,graph,pivot</field>
-            <field name="context">{"search_default_this_week":1}</field>
+            <field name="view_mode">tree,form,calendar,graph,pivot</field>
+            <field name="context">{"search_default_this_month":1}</field>
             <field name="help" type="html">
                 <p class="oe_view_nocontent_create">
                     There is no Catalogue Request click New Button to add new.

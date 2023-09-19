@@ -1,5 +1,6 @@
 from odoo import fields, models, api, _
 from odoo.http import request
+from odoo.exceptions import UserError
 
 from .addis_systems import addis_systems_producer_controller as as_producer
 
@@ -22,11 +23,11 @@ class AddisSystemsCatalogueRequest(models.Model):
     partner_id = fields.Many2one('res.partner', string='Partner', required=True)
 
     name = fields.Char(string="Catalogue Request Reference", required=True, default=lambda self: _('New'))
-    state = fields.Selection([('new', 'New'), ('quoted', 'Quoted'), ('sent', 'Sent')], required=True, default='new')
+    state = fields.Selection([('new', 'New'), ('quoted', 'Quoted'), ('sent', 'Sent'), ('canceled', 'Canceled')], required=True, default='new')
 
-    pass_to_prospective_customer = fields.Boolean(string='Might Pass to Prospective Customer')
+    pass_to_prospective_customer = fields.Boolean(string='Pass to Customer')
     catalogue_with_price = fields.Boolean(string='With Price')
-    trade_terms = fields.Selection([('itinerant', 'Itinerant Retailing'), ('fixed_shop', 'Fixed Shop Retailing')], required=False, readonly=False, copy=False, tracking=True)
+    trade_terms = fields.Selection([('blanket', 'Blanket Order'), ('retail', 'Retailing')], required=False, readonly=False, copy=False, tracking=True)
 
     requested_date = fields.Date(string='Requested Date', required=True, default=lambda self: fields.Date.context_today(self))
     expire_date = fields.Date(string='Expire Date', required=False)
@@ -36,8 +37,13 @@ class AddisSystemsCatalogueRequest(models.Model):
 
     #   Catalogue references
 
-    partner_rfc_reference = fields.Char(string="Partner RFC Reference", required=True)
+    expired = fields.Boolean(string='Expired', compute="compute_catalogue_request_deadline")
+    partner_rfc_reference = fields.Char(string="Partner Reference", required=True)
     child_catalogue_quotation_count = fields.Integer(compute='_compute_child_catalogue_quotation_count')
+
+    def compute_catalogue_request_deadline(self):
+        for req in self:
+            req.expired = fields.Date.context_today(self) > req.expire_date
 
     def _compute_child_catalogue_quotation_count(self):
         for req in self:
@@ -50,6 +56,15 @@ class AddisSystemsCatalogueRequest(models.Model):
             if vals.get('name', _('New')) == _('New'):
                 vals['name'] = self.env['ir.sequence'].next_by_code('sale.catalogue.request') or _('New')
             return super(AddisSystemsCatalogueRequest, self).create(vals)
+
+    def cancel_catalogue_request(self):
+        if self.child_catalogue_quotation_count > 0:
+            for quotation in self.env['sale.order.catalogue_quotations'].search([('catalogue_request_id', '=', self.id)]):
+                quotation.cancel_catalogue_quotation()
+        self.state = 'canceled'
+
+        for activity in self.env['mail.activity'].search([('res_id', '=', self.id)]):
+            activity.unlink()
 
     def action_create_catalogue_quotation(self):
         new_wizard = self.env['sale.order.catalogue_request.quot_wizard'].create({'name': "New Catalog Quotation", 'catalogue_request': self.id})
@@ -64,17 +79,31 @@ class AddisSystemsCatalogueRequest(models.Model):
             'views': [[view_id, 'form']],
         }
 
-    def addis_systems_request_for_catalogue_digest(self):
-        all_active_thread_names = [thread.name for thread in enumerate()]
+    def action_create_blanket_order(self):
+        new_wizard = self.env['sale.order.catalogue_request.quot_wizard'].create({'name': "New Catalog Quotation", 'catalogue_request': self.id})
+        view_id = self.env.ref('addis_systems_catalogue_and_order_exchange.addis_systems_catalogue_quotation_create_wizard_form_view').id
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Confirm'),
+            'view_mode': 'form',
+            'res_model': 'sale.order.catalogue_request.quot_wizard',
+            'target': 'new',
+            'res_id': new_wizard.id,
+            'views': [[view_id, 'form']],
+        }
 
-        rfc_thread_name = 'addis_systems_request_for_catalogue_listener'
-        if rfc_thread_name not in all_active_thread_names:
-            _logger.info('Starting Thread %s for company: %s', rfc_thread_name, self.env.company.name)
-            rfc_message_waiter_thread = Thread(target=consumer.request_for_catalogue_consumer_asynch, args=(self,), name=rfc_thread_name)
-            rfc_message_waiter_thread.daemon = True
-            rfc_message_waiter_thread.start()
-        else:
-            _logger.info('Skipping Thread %s for company: %s', rfc_thread_name, self.env.company.name)
+    def addis_systems_request_for_catalogue_digest(self, client):
+        if client:
+            all_active_thread_names = [thread.name for thread in enumerate()]
+
+            rfc_thread_name = 'addis_systems_request_for_catalogue_listener'
+            if rfc_thread_name not in all_active_thread_names:
+                _logger.info('Starting Thread %s for company: %s', rfc_thread_name, self.env.company.name)
+                rfc_message_waiter_thread = Thread(target=consumer.request_for_catalogue_consumer_asynch, args=(self, client), name=rfc_thread_name)
+                rfc_message_waiter_thread.daemon = True
+                rfc_message_waiter_thread.start()
+            else:
+                _logger.info('Skipping Thread %s for company: %s', rfc_thread_name, self.env.company.name)
 
 
 class AddisSystemsCatalogueQuotations(models.Model):
@@ -87,12 +116,16 @@ class AddisSystemsCatalogueQuotations(models.Model):
     catalogue_request_id = fields.Many2one('sale.order.catalogue_request', string='Catalogue Request ID', readonly=True)
 
     partner_id = fields.Many2one('res.partner', string='Partner', required=True)
-    state = fields.Selection([('draft', 'Draft'), ('sent', 'Sent')], required=True, default='draft')
-    pass_to_prospective_customer = fields.Boolean(string='Might Pass to Prospective Customer', default=False)
+    state = fields.Selection([('draft', 'Draft'), ('sent', 'Sent'), ('canceled', 'Canceled')], required=True, default='draft')
+    pass_to_prospective_customer = fields.Boolean(string='Pass to Customer', default=False)
     with_price = fields.Boolean(related='catalogue_request_id.catalogue_with_price')
+    trade_terms = fields.Selection(related='catalogue_request_id.trade_terms')
 
     descriptive_literature = fields.Html(related='catalogue_request_id.descriptive_literature', string='Descriptive Literature')
     condition = fields.Html(related='catalogue_request_id.condition', string='Condition')
+
+    date_end = fields.Date(string='Blanket Date Start', required=False)
+    start_date = fields.Date(string='Blanket Date End', required=False)
 
     company_id = fields.Many2one('res.company', string='Company', required=True, default=lambda self: self.env.company, readonly=True)
 
@@ -125,6 +158,9 @@ class AddisSystemsCatalogueQuotations(models.Model):
                               message_type="notification",
                               partner_ids=sales_all_doc_group_users.ids,
                               subtype_xmlid="mail.mt_comment", notify_by_email=False)
+
+    def cancel_catalogue_quotation(self):
+        self.state = 'canceled'
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -175,14 +211,15 @@ class AddisSalesExchangeInherited(models.Model):
     def partner_filter(self):
         return {'domain': {'partner_id': [('id', '!=', self.company_id.partner_id.id)]}}
 
+    updated_price = fields.Boolean(string="Updated Price", default=True)
+
     catalogue_quotation_id = fields.Many2one('sale.order.catalogue_quotations', 'Catalogue quotation', required=False)
     with_price = fields.Boolean(related='catalogue_quotation_id.with_price')
 
-
-    def send_sales_order_quotation_update_e_order(self):
+    def send_so_price_update(self):
         so_send = None
         try:
-            so_send = as_producer.send_rfq_update_for_buyer(self)
+            so_send = as_producer.send_price_update_buyer(self)
         except Exception as e:
             _logger.warning("%s:Addis Systems Order Exchange Fail for %s", e, self.name)
         finally:
@@ -196,17 +233,18 @@ class AddisSalesExchangeInherited(models.Model):
             _logger.warning("%s:Addis Systems Order Exchange Fail for %s", e, self.name)
         return super(AddisSalesExchangeInherited, self).action_confirm()
 
-    def addis_systems_sales_order_digest(self):
-        all_active_thread_names = [thread.name for thread in enumerate()]
+    def addis_systems_sales_order_digest(self, client):
+        if client:
+            all_active_thread_names = [thread.name for thread in enumerate()]
 
-        so_thread_name = 'addis_systems_sales_order_listener'
-        if so_thread_name not in all_active_thread_names:
-            _logger.info('Starting Thread %s for company: %s', so_thread_name, self.env.company.name)
-            so_message_waiter_thread = Thread(target=consumer.sales_order_consumer_asynch, args=(self,), name=so_thread_name)
-            so_message_waiter_thread.daemon = True
-            so_message_waiter_thread.start()
-        else:
-            _logger.info('Skipping Thread %s for company: %s', so_thread_name, self.env.company.name)
+            so_thread_name = 'addis_systems_sales_order_listener'
+            if so_thread_name not in all_active_thread_names:
+                _logger.info('Starting Thread %s for company: %s', so_thread_name, self.env.company.name)
+                so_message_waiter_thread = Thread(target=consumer.sales_order_consumer_asynch, args=(self, client), name=so_thread_name)
+                so_message_waiter_thread.daemon = True
+                so_message_waiter_thread.start()
+            else:
+                _logger.info('Skipping Thread %s for company: %s', so_thread_name, self.env.company.name)
 
 
 class AddisSalesLineExchangeInherited(models.Model):

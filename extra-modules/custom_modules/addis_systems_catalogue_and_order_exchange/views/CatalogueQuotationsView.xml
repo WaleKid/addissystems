@@ -8,8 +8,10 @@
             <field name="arch" type="xml">
                 <form string="Catalogue Quotations">
                     <header>
-                        <button name="seller_action_send_catalogue_quotation_to_buyer" string='Send' type='object' attrs="{'invisible': [('state', '=', 'sent')]}"/>
-                        <field name="state" widget="statusbar" statusbar_visible="draft,sent"/>
+                        <button name="seller_action_send_catalogue_quotation_to_buyer" class="oe_highlight" string='Send Blanket Order' type='object' attrs="{'invisible': ['|', ('state', 'in', ['sent', 'canceled']), ('trade_terms', '!=', 'blanket')]}"/>
+                        <button name="seller_action_send_catalogue_quotation_to_buyer" class="oe_highlight" string='Send Catalogue' type='object' attrs="{'invisible': ['|', ('state', 'in', ['sent', 'canceled']), ('trade_terms', '=', 'blanket')]}"/>
+                        <button name="cancel_catalogue_quotation" string='Cancel' type='object' attrs="{'invisible': [('state', 'in', ['sent', 'canceled'])]}"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,sent,canceled"/>
                     </header>
                     <sheet>
                         <div class="oe_title">
@@ -22,15 +24,22 @@
                             <group>
                                 <field name="partner_id" attrs="{'readonly': [('catalogue_request_id', '!=', False)]}"/>
                                 <field name="catalogue_request_id" string="Request Reference"/>
+                                <field name="trade_terms" readonly="1"/>
                             </group>
                             <group>
+                                <label for="start_date" string="Order Date Range" attrs="{'invisible': [('trade_terms', '!=', 'blanket')]}"/>
+                                <div class="o_row" attrs="{'invisible': [('trade_terms', '!=', 'blanket')]}">
+                                    <field name="start_date" widget="daterange" options='{"related_end_date": "date_end"}' attrs="{'invisible': [('trade_terms', '!=', 'blanket')], 'readonly':[('state', 'in', ['sent', 'canceled'])]}"/>
+                                    <i class="fa fa-long-arrow-right mx-2 oe_edit_only" aria-label="Arrow icon" title="Arrow" attrs="{'invisible': [('trade_terms', '!=', 'blanket')]}"/>
+                                    <field name="date_end" widget="daterange" options='{"related_start_date": "start_date"}' attrs="{'invisible': [('trade_terms', '!=', 'blanket')], 'readonly':[('state', 'in', ['sent', 'canceled'])]}"/>
+                                </div>
                                 <field name="with_price" widget="boolean_toggle" attrs="{'readonly': [('catalogue_request_id', '!=', False)]}"/>
                                 <field name="pass_to_prospective_customer" widget="boolean_toggle" attrs="{'readonly': [('catalogue_request_id', '!=', False)]}"/>
                             </group>
                         </group>
                         <notebook>
                             <page string="Products" name="products">
-                                <field name="catalogue_quotation_line" widget="one2many" attrs="{'readonly': [('state', '=', 'sent')]}">
+                                <field name="catalogue_quotation_line" widget="one2many" attrs="{'readonly': [('state', 'in', ['sent', 'canceled'])]}">
                                     <tree string="Products" editable="bottom">
                                         <field name="with_price" invisible="1"/>
                                         <field name="sequence" widget="handle"/>
@@ -47,21 +56,23 @@
                                     </tree>
                                 </field>
                             </page>
-                            <page string="Description" name="description">
-                                <div class="row mt16 o_settings_container">
-                                    <div>
-                                        <strong>
-                                            <label for="descriptive_literature"/>
-                                        </strong>
-                                        <field name="descriptive_literature" widget="html" class="oe-bordered-editor" nolabel="1" requied="1" readonly="1"/>
-                                    </div>
-                                    <div>
-                                        <strong>
-                                            <label for="condition"/>
-                                        </strong>
-                                        <field name="condition" widget="html" nolabel="1" class="oe-bordered-editor" readonly="1"/>
-                                    </div>
+                            <page string="Descriptive Literature" name="descriptive_literature">
+                                <div>
+                                    <field name="descriptive_literature" widget="html" class="oe-bordered-editor" nolabel="1" requied="1" readonly="1"/>
                                 </div>
+                                <span>
+                                    <strong>Note:</strong>
+                                    Description on requested products specifications and other product attributes in detail
+                                </span>
+                            </page>
+                            <page string="Other Conditions" name="condition">
+                                <div>
+                                    <field name="condition" widget="html" nolabel="1" class="oe-bordered-editor" readonly="1"/>
+                                </div>
+                                <span>
+                                    <strong>Note:</strong>
+                                    Description on other conditions and related descriptions on the trade terms information
+                                </span>
                             </page>
                         </notebook>
 
@@ -84,7 +95,7 @@
                     <field name="partner_id"/>
                     <field name="catalogue_request_id" string="Request Reference"/>
                     <field name="pass_to_prospective_customer" widget="boolean_toggle" readonly="1"/>
-                    <field name="state" widget="badge" decoration-info="state == 'draft'" decoration-success="state == 'sent'"/>
+                    <field name="state" widget="badge" decoration-info="state == 'draft'" decoration-success="state == 'sent'" decoration-danger="state == 'canceled'"/>
                 </tree>
             </field>
         </record>
@@ -132,6 +143,8 @@
                 <search string="Catalogue Quotations">
                     <group expand="1" string="Group By">
                         <filter string="Draft" name="state_draft_filter" domain="[('state', '=', 'draft')]"/>
+                        <filter string="Sent" name="state_sent_filter" domain="[('state', '=', 'sent')]"/>
+                        <filter string="Canceled" name="state_canceled_filter" domain="[('state', '=', 'canceled')]"/>
                         <separator/>
                         <group expand="1" string="Group By">
                             <filter string="State" name="state_draft_group" domain="[]" context="{'group_by':'state'}"/>
@@ -168,7 +181,7 @@
             <field name="name">Catalogue Quotations</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">sale.order.catalogue_quotations</field>
-            <field name="view_mode">tree,kanban,form,calendar,graph,pivot</field>
+            <field name="view_mode">tree,form,calendar,graph,pivot</field>
             <field name="context">{"search_default_state_draft_filter":1}</field>
             <field name="help" type="html">
                 <p class="oe_view_nocontent_create">

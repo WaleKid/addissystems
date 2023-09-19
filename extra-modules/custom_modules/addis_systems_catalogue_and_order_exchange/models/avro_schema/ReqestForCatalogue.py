@@ -53,23 +53,31 @@ rfc_schema = {
             "type": "record",
             "name": "Seller",
             "fields": [{
-                "name": "company_name",
-                "type": "string"
-
-            }, {
-                "name": "licence_number",
-                "type": "string"
-
-            }, {
                 "name": "tin_no",
                 "type": "string"
 
             }, {
-                "name": "vat_reg_Dt",
+                "name": "vat_reg_no",
                 "type": "string"
 
             }, {
-                "name": "vat_reg_no",
+                "name": "address",
+                "type": "string"
+
+            }, {
+                "name": "location",
+                "type": "string"
+
+            }, {
+                "name": "phone_no",
+                "type": "string"
+
+            }, {
+                "name": "email",
+                "type": "string"
+
+            }, {
+                "name": "company_name",
                 "type": "string"
 
             }]

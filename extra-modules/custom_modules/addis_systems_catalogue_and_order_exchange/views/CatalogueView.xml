@@ -8,20 +8,32 @@
             <field name="res_model">purchase.order</field>
         </record>
 
+        <record id="template_open_child_blanket" model="ir.actions.act_window">
+            <field name="domain">[('catalogue_id', '=', active_id)]</field>
+            <field name="name">Blanket Order</field>
+            <field name="res_model">purchase.requisition</field>
+        </record>
+
         <record id="addis_systems_catalogue_form_view" model="ir.ui.view">
             <field name="name">addis_systems_catalogue_and_order_exchange.purchase_order_catalogue.form.view</field>
             <field name="model">purchase.order.catalogue</field>
             <field name="arch" type="xml">
                 <form string="Catalogue">
                     <header>
-                        <button name="action_create_generate_rfq" string="Generate RFQ" attrs="{'invisible': [('count_product_transfer', '=', 0)]}"
+                        <button name="action_create_generate_rfq" string="Generate RFQ" attrs="{'invisible': ['|', ('count_product_transfer', '=', 0), ('trade_terms', '=', 'blanket')]}"
                                 type="object" class="oe_highlight" data-hotkey="w" title="Generate RFQ"/>
+                        <button name="action_create_generate_blanket_order" string="Create Blanket Order" attrs="{'invisible': ['|', '|', '|', '|', ('count_product_transfer', '=', 0), ('trade_terms', '=', 'retail'), ('start_date', '=', False), ('date_end', '=', False), ('child_blanket_count', '&gt;', 0)]}"
+                                type="object" class="oe_highlight" data-hotkey="w" title="Create Blanket Order"/>
                     </header>
                     <sheet>
                         <div class="oe_button_box" name="button_box">
                             <button class="oe_stat_button" name="%(template_open_child_quotation)d" type="action"
                                     icon="fa-list-alt" attrs="{'invisible': [('child_quotation_count', '=', 0)]}">
                                 <field string="Quotations" name="child_quotation_count" widget="statinfo"/>
+                            </button>
+                            <button class="oe_stat_button" name="%(template_open_child_blanket)d" type="action"
+                                    icon="fa-list-alt" attrs="{'invisible': [('child_blanket_count', '=', 0)]}">
+                                <field string="Blanket Order" name="child_blanket_count" widget="statinfo"/>
                             </button>
                         </div>
                         <div class="oe_title">
@@ -34,11 +46,18 @@
                             <group>
                                 <field name="partner_id" attrs="{'readonly': [('catalogue_rfc_id', '!=', False)]}"/>
                                 <field name="catalogue_rfc_id" readonly="1"/>
+                                <field name="trade_terms" readonly="1"/>
                                 <field name="count_product_transfer" invisible="1"/>
                             </group>
                             <group>
                                 <field name="pass_to_prospective_customer" widget="boolean_toggle" attrs="{'readonly': [('catalogue_rfc_id', '!=', False)]}"/>
                                 <field name="catalogue_with_price" widget="boolean_toggle" attrs="{'readonly': [('catalogue_rfc_id', '!=', False)]}"/>
+                                <label for="start_date" string="Date Span" attrs="{'invisible': [('trade_terms', '!=', 'blanket')]}"/>
+                                <div class="o_row" attrs="{'invisible': [('trade_terms', '!=', 'blanket')]}">
+                                    <field name="start_date" widget="daterange" options='{"related_end_date": "date_end"}' attrs="{'required': [('trade_terms', '=', 'blanket')], 'readonly':[('trade_terms', '=', 'blanket')]}"/>
+                                    <i class="fa fa-long-arrow-right mx-2 oe_edit_only" aria-label="Arrow icon" title="Arrow"/>
+                                    <field name="date_end" widget="daterange" options='{"related_start_date": "start_date"}' attrs="{'required': [('trade_terms', '=', 'blanket')], 'readonly':[('trade_terms', '=', 'blanket')]}"/>
+                                </div>
                             </group>
                         </group>
                         <field name="catalogue_line" widget="one2many">
@@ -168,7 +187,7 @@
             <field name="name">Catalogue</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">purchase.order.catalogue</field>
-            <field name="view_mode">tree,kanban,form,calendar,graph,pivot</field>
+            <field name="view_mode">tree,form,calendar,graph,pivot</field>
             <field name="context">{"search_default_state_draft_filter":1}</field>
             <field name="help" type="html">
                 <p class="oe_view_nocontent_create">

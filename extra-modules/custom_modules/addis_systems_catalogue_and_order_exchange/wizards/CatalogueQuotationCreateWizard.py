@@ -9,8 +9,11 @@ class AddisSystemsCatalogueRequestCreateWizard(models.TransientModel):
 
     catalogue_request = fields.Many2one('sale.order.catalogue_request', string="Catalogue Request")
 
-    pass_to_prospective_customer = fields.Boolean(related='catalogue_request.pass_to_prospective_customer', string='Might Pass to Prospective Customer')
+    pass_to_prospective_customer = fields.Boolean(related='catalogue_request.pass_to_prospective_customer', string='Pass to Customer')
     catalogue_with_price = fields.Boolean(related='catalogue_request.catalogue_with_price', string='With Price')
+
+    start_date = fields.Date(string='Blanket Date End', required=False)
+    date_end = fields.Date(string='Blanket Date Start', required=False)
 
     trade_terms = fields.Selection(related='catalogue_request.trade_terms', string='Trade Terms')
 
@@ -18,9 +21,15 @@ class AddisSystemsCatalogueRequestCreateWizard(models.TransientModel):
     condition = fields.Html(related='catalogue_request.condition')
 
     catalogue_product_line = fields.One2many('sale.order.catalogue_request.quot_wizard.line', 'parent_wizard_id', 'Parent Wizard', copy=True)
+    line_count = fields.Integer(string='Number of Line', compute='_get_lines_count')
 
-    def _get_default_product_uom_id(self):
-        return self.env['uom.uom'].search([], limit=1, order='id').id
+    @api.onchange('catalogue_product_line', 'start_date', 'date_end')
+    def _get_lines_count(self):
+        for wizard in self:
+            if wizard.trade_terms == 'blanket' and wizard.start_date and wizard.date_end or wizard.trade_terms != 'blanket':
+                wizard.line_count = len(wizard.catalogue_product_line)
+            else:
+                wizard.line_count = 0
 
     def generate_quotation(self):
         product_line = []
@@ -31,7 +40,7 @@ class AddisSystemsCatalogueRequestCreateWizard(models.TransientModel):
                 quotation_line = self.env['sale.order.catalogue_quotations.line'].create({'product_id': line.product_id.id})
             product_line += [quotation_line.id]
         create_quotation = self.env['sale.order.catalogue_quotations'].create(
-            {'partner_id': self.catalogue_request.partner_id.id, 'pass_to_prospective_customer': self.pass_to_prospective_customer, 'catalogue_request_id': self.catalogue_request.id, 'catalogue_quotation_line': product_line})
+            {'partner_id': self.catalogue_request.partner_id.id, 'pass_to_prospective_customer': self.pass_to_prospective_customer, 'catalogue_request_id': self.catalogue_request.id, 'catalogue_quotation_line': product_line, 'start_date': self.start_date, 'date_end': self.date_end})
 
         if create_quotation:
             self.catalogue_request.state = 'quoted'
@@ -50,7 +59,7 @@ class AddisSystemsCatalogueRequestCreateWizard(models.TransientModel):
                 quotation_line = self.env['sale.order.catalogue_quotations.line'].create({'product_id': line.product_id.id})
             product_line += [quotation_line.id]
         create_quotation = self.env['sale.order.catalogue_quotations'].create(
-            {'partner_id': self.catalogue_request.partner_id.id, 'pass_to_prospective_customer': self.pass_to_prospective_customer, 'catalogue_request_id': self.catalogue_request.id, 'catalogue_quotation_line': product_line})
+            {'partner_id': self.catalogue_request.partner_id.id, 'pass_to_prospective_customer': self.pass_to_prospective_customer, 'catalogue_request_id': self.catalogue_request.id, 'catalogue_quotation_line': product_line, 'start_date': self.start_date, 'date_end': self.date_end})
 
         sent = create_quotation.seller_action_send_catalogue_quotation_to_buyer()
 
@@ -59,8 +68,6 @@ class AddisSystemsCatalogueRequestCreateWizard(models.TransientModel):
 
         for activity in self.env['mail.activity'].search([('res_id', '=', self.catalogue_request.id), ('user_id', '!=', self.env.user.id)]):
             activity.unlink()
-
-
 
         return create_quotation
 
@@ -73,6 +80,7 @@ class AddisSystemsCatalogueRequestCreateWizardLine(models.TransientModel):
         return self.env['uom.uom'].search([], limit=1, order='id').id
 
     parent_wizard_id = fields.Many2one('sale.order.catalogue_request.quot_wizard', 'Parent Wizard', index=True, ondelete='cascade', required=False)
+    trade_terms = fields.Selection(related='parent_wizard_id.trade_terms', string='Trade Terms')
 
     product_id = fields.Many2one('product.product', 'Product', required=True)
     product_tmpl_id = fields.Many2one('product.template', 'Product Template', related='product_id.product_tmpl_id', store=True, index=True)

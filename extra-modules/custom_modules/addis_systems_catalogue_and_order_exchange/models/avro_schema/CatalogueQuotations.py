@@ -15,6 +15,12 @@ catalogue_quotation_schema = {
             }, {
                 "name": "RFC_Reference",
                 "type": "string"
+            }, {
+                "name": "Date_Start",
+                "type": "string"
+            }, {
+                "name": "Date_End",
+                "type": "string"
             }]
         }]
     }, {
@@ -42,7 +48,7 @@ catalogue_quotation_schema = {
                     "name": "Product_Type",
                     "type": "string"
 
-                },{
+                }, {
                     "name": "Product_Price",
                     "type": "string"
 
@@ -75,23 +81,31 @@ catalogue_quotation_schema = {
             "type": "record",
             "name": "Seller",
             "fields": [{
-                "name": "company_name",
-                "type": "string"
-
-            }, {
-                "name": "licence_number",
-                "type": "string"
-
-            }, {
                 "name": "tin_no",
                 "type": "string"
 
             }, {
-                "name": "vat_reg_Dt",
+                "name": "vat_reg_no",
                 "type": "string"
 
             }, {
-                "name": "vat_reg_no",
+                "name": "address",
+                "type": "string"
+
+            }, {
+                "name": "location",
+                "type": "string"
+
+            }, {
+                "name": "phone_no",
+                "type": "string"
+
+            }, {
+                "name": "email",
+                "type": "string"
+
+            }, {
+                "name": "company_name",
                 "type": "string"
 
             }]
