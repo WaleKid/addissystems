@@ -78,7 +78,7 @@ async def dispatch_producer(inventory_id, origin):
 
     producer = None
     try:
-        client = pulsar.Client("pulsar://196.189.124.178:6650")
+        client = pulsar.Client("pulsar://192.168.100.208:30001")
     except Exception as e:
         _logger.warning("%s:Connection to Addis Systems could not be achieved. please try later!", e)
         raise UserError("Connection to Addis Systems could not be achieved. please try later!") from e
@@ -168,7 +168,7 @@ async def dispatch_receipt_confirm_producer(inventory_id, origin):
 
     producer = None
     try:
-        client = pulsar.Client("pulsar://196.189.124.178:6650")
+        client = pulsar.Client("pulsar://192.168.100.208:30001")
     except Exception as e:
         _logger.warning("%s:Connection to Addis Systems could not be achieved. please try later!", e)
         raise UserError("Connection to Addis Systems could not be achieved. please try later!") from e

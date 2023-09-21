@@ -24,7 +24,7 @@ class AddisRefundExchangeInherited(models.Model):
 
     def seller_refund_to_buyer(self):
         invoice_ack_schema = InvoiceAcknowledgement.invoice_acknowledgement_schema
-        client = pulsar.Client("pulsar://196.189.124.178:6650")
+        client = pulsar.Client("pulsar://192.168.100.208:30001")
         exc_producer = client.create_producer('persistent://addisadmin/refund/exchange')
         message = {
             'IRN': self.IRN or '',

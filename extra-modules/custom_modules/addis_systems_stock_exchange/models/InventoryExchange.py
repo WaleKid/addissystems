@@ -14,7 +14,7 @@ from threading import Thread, enumerate
 
 
 def check_partner_electronic_invoice_user(partner):
-    tenants_list_url = "http://196.189.124.178:8080/admin/v2/tenants"
+    tenants_list_url = "http://192.168.100.208:30000/admin/v2/tenants"
     tenants_list = requests.get(tenants_list_url, timeout=150)
     return str(partner.name).replace(' ', '').lower() in tenants_list.json()
 

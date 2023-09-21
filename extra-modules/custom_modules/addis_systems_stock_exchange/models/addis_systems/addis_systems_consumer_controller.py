@@ -23,7 +23,7 @@ def stock_receipt_consumer_asynch(stock_env, thread_name):
     def stock_receipt_pulsar_waiter(stock_env):
         consumer = None
 
-        client = pulsar.Client("pulsar://196.189.124.178:6650")
+        client = pulsar.Client("pulsar://192.168.100.208:30001")
         topic_name = "persistent://" + stock_env.env.company.name.replace(' ', '').lower() + "/orders/receipt"
         consumer_configuration = {"subscription_name": str(stock_env.env.company.name).replace(' ', '').lower()}
         try:
@@ -97,7 +97,7 @@ def stock_delivery_confirmation_consumer_asynch(stock_env, thread_name):
     def stock_delivery_confirmation_pulsar_waiter(stock_env):
         consumer = None
 
-        client = pulsar.Client("pulsar://196.189.124.178:6650")
+        client = pulsar.Client("pulsar://192.168.100.208:30001")
         topic_name = "persistent://" + stock_env.env.company.name.replace(' ', '').lower() + "/orders/delivery"
         consumer_configuration = {"subscription_name": str(stock_env.env.company.name).replace(' ', '').lower()}
         try:
