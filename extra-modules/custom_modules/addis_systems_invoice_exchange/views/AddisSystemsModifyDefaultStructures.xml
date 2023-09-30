@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <menuitem name="Chat"
+                  id="mail.menu_root_discuss"
+                  action="mail.action_discuss"
+                  web_icon="mail,static/description/icon.svg"
+                  groups="base.group_system"
+                  sequence="5"
+        />
+
+        <menuitem
+                id="spreadsheet_dashboard.spreadsheet_dashboard_menu_root"
+                name="Dashboards"
+                action="spreadsheet_dashboard.ir_actions_dashboard_action"
+                web_icon="spreadsheet_dashboard,static/description/icon.svg"
+                sequence="1"/>
+
+    </data>
+</odoo>
