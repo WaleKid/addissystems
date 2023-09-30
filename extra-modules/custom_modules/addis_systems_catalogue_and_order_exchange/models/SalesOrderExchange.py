@@ -133,7 +133,7 @@ class AddisSystemsCatalogueQuotations(models.Model):
     catalogue_quotation_line = fields.One2many('sale.order.catalogue_quotations.line', 'parent_quotation_id', 'Parent Wizard', copy=True)
 
     def seller_action_send_catalogue_quotation_to_buyer(self):
-        tenants_list_url = "http://192.168.100.208:30000/admin/v2/tenants"
+        tenants_list_url = "http://192.168.100.208:8080/admin/v2/tenants"
         tenants_list = requests.get(tenants_list_url, timeout=TIMEOUT)
 
         catalogue_quotation_send = None

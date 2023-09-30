@@ -18,6 +18,7 @@
     'data': [
         'views/InvoiceAndVendorFormInherited.xml',
         'reports/AddisSystemInvoiceReportInherit.xml',
+        'views/AddisSystemsModifyDefaultStructures.xml',
         'views/AddisSystemsTemplate.xml',
         'views/AddisSystemsPaymentGateways.xml'
     ],

@@ -7,8 +7,10 @@
             <field name="inherit_id" ref="account.view_move_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//header/button[@name='action_register_payment']" position="before">
-                    <button name="seller_invoice_to_buyer" class="oe_highlight" string='Send E-Invoice' type='object' attrs="{'invisible': ['|', '|', '|', ('partner_e_invoicing', '=', False), ('move_type', '!=', 'out_invoice'), ('signed_invoice', '=', False), ('e_invoicing', '=', True)]}"/>
-                    <button name="seller_refund_to_buyer" class="oe_highlight" string='Send E-Refund' type='object' attrs="{'invisible': ['|', '|', '|', ('partner_e_invoicing', '=', False), ('move_type', '!=', 'in_refund'), ('signed_invoice', '=', False), ('e_invoicing', '=', True)]}"/>
+                    <button name="seller_invoice_to_buyer" class="oe_highlight" string='Send E-Invoice' type='object'
+                            attrs="{'invisible': ['|', '|', '|', ('partner_e_invoicing', '=', False), ('move_type', '!=', 'out_invoice'), ('signed_invoice', '=', False), ('e_invoicing', '=', True)]}"/>
+                    <button name="seller_refund_to_buyer" class="oe_highlight" string='Send E-Refund' type='object'
+                            attrs="{'invisible': ['|', '|', '|', ('partner_e_invoicing', '=', False), ('move_type', '!=', 'in_refund'), ('signed_invoice', '=', False), ('e_invoicing', '=', True)]}"/>
                 </xpath>
                 <xpath expr="//div[@name='button_box']/button[@name='open_created_caba_entries']" position="before">
                     <button id="erca_registration_state" class="oe_stat_button" attrs="{'invisible': ['|', ('invoice_status', 'in', ['pending', 'failed']), ('move_type', '!=', 'out_invoice')]}">

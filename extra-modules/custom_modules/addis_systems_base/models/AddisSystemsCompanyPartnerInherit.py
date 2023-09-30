@@ -32,10 +32,10 @@ class AddisSystemsCompanyInherited(models.Model):
     trade_name = fields.Char(string="Trade Name ", readonly=False, required=True, default=lambda self: self.env.company.name)
 
     def addis_system_connection_init(self):
-        tenants_list_url = "http://192.168.100.208:30000/admin/v2/tenants"
+        tenants_list_url = "http://192.168.100.208:8080/admin/v2/tenants"
         tenants_list = requests.get(tenants_list_url, timeout=100)
         if str(self.env.company.name).replace(' ', '').lower() in tenants_list.json():
-            client = pulsar.Client("pulsar://192.168.100.208:30001")
+            client = pulsar.Client("pulsar://192.168.100.208:6650")
             print("------------------------------------------------------------------------------------------------------------------------------------------------")
             print("                                     Addis Systems Consumer Service has started for company", self.env.company.name)
             print("------------------------------------------------------------------------------------------------------------------------------------------------")

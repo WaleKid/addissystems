@@ -65,7 +65,7 @@ def send_request_for_catalogue_order(rfc_id, partner):
     }
 
     try:
-        client = pulsar.Client("pulsar://192.168.100.208:30001")
+        client = pulsar.Client("pulsar://192.168.100.208:6650")
     except Exception as e:
         _logger.warning("%s:Connection to Addis Systems could not be achieved. please try later!", e)
     finally:
@@ -141,7 +141,7 @@ def send_catalogue_quotation(catalogue_quotation):
     }
 
     try:
-        client = pulsar.Client("pulsar://192.168.100.208:30001")
+        client = pulsar.Client("pulsar://192.168.100.208:6650")
     except Exception as e:
         _logger.warning("%s:Connection to Addis Systems could not be achieved. please try later!", e)
     finally:
@@ -246,7 +246,7 @@ def send_po_price_request(purchase_order_id):
     }
 
     try:
-        client = pulsar.Client("pulsar://192.168.100.208:30001")
+        client = pulsar.Client("pulsar://192.168.100.208:6650")
     except Exception as e:
         _logger.warning("%s:Connection to Addis Systems could not be achieved. please try later!", e)
     finally:
@@ -350,7 +350,7 @@ def send_price_update_buyer(sales_order_rfq):
     }
 
     try:
-        client = pulsar.Client("pulsar://192.168.100.208:30001")
+        client = pulsar.Client("pulsar://192.168.100.208:6650")
     except Exception as e:
         _logger.warning("%s:Connection to Addis Systems could not be achieved. please try later!", e)
     finally:
@@ -455,7 +455,7 @@ def send_new_po_request(purchase_order_id):
     }
 
     try:
-        client = pulsar.Client("pulsar://192.168.100.208:30001")
+        client = pulsar.Client("pulsar://192.168.100.208:6650")
     except Exception as e:
         _logger.warning("%s:Connection to Addis Systems could not be achieved. please try later!", e)
     finally:
