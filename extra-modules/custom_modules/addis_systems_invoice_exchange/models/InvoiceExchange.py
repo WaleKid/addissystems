@@ -25,63 +25,86 @@ TIMEOUT = 150
 
 
 class AddisAccountTaxInherited(models.Model):
-    _inherit = 'account.tax'
+    _inherit = "account.tax"
 
     @api.model
     def _prepare_tax_totals(self, base_lines, currency, tax_lines=None):
-        prepare_tax = super(AddisAccountTaxInherited, self)._prepare_tax_totals(base_lines, currency, tax_lines=None)
+        prepare_tax = super(AddisAccountTaxInherited, self)._prepare_tax_totals(
+            base_lines, currency, tax_lines=None
+        )
         non_taxable_amount = 0
         taxable_amount = 0
         tax_amount = 0
         for line in base_lines:
-            if not line['taxes']:
-                non_taxable_amount += line['price_unit'] * line['quantity']
+            if not line["taxes"]:
+                non_taxable_amount += line["price_unit"] * line["quantity"]
             else:
-                taxable_amount += line['price_unit'] * line['quantity']
+                taxable_amount += line["price_unit"] * line["quantity"]
 
-        if prepare_tax['groups_by_subtotal']:
-            dic_items = dict(prepare_tax['groups_by_subtotal'])
-            groups_by_subtotal_dic = dic_items.get('Untaxed Amount')[0]
+        if prepare_tax["groups_by_subtotal"]:
+            dic_items = dict(prepare_tax["groups_by_subtotal"])
+            groups_by_subtotal_dic = dic_items.get("Untaxed Amount")[0]
 
-            tax_amount = groups_by_subtotal_dic['tax_group_amount']
+            tax_amount = groups_by_subtotal_dic["tax_group_amount"]
         #
-        prepare_tax['non_taxable_amount'] = non_taxable_amount
-        prepare_tax['taxable_amount'] = taxable_amount
-        prepare_tax['taxable_amount_formatted'] = formatLang(self.env, taxable_amount, currency_obj=currency)
-        prepare_tax['non_taxable_amount_formatted'] = formatLang(self.env, non_taxable_amount, currency_obj=currency)
+        prepare_tax["non_taxable_amount"] = non_taxable_amount
+        prepare_tax["taxable_amount"] = taxable_amount
+        prepare_tax["taxable_amount_formatted"] = formatLang(
+            self.env, taxable_amount, currency_obj=currency
+        )
+        prepare_tax["non_taxable_amount_formatted"] = formatLang(
+            self.env, non_taxable_amount, currency_obj=currency
+        )
         #
-        prepare_tax['tax_amount'] = tax_amount
-        prepare_tax['tax_amount_formatted'] = formatLang(self.env, tax_amount, currency_obj=currency)
+        prepare_tax["tax_amount"] = tax_amount
+        prepare_tax["tax_amount_formatted"] = formatLang(
+            self.env, tax_amount, currency_obj=currency
+        )
         #
-        prepare_tax['grand_total_amount'] = taxable_amount + non_taxable_amount + tax_amount
-        prepare_tax['grand_total_amount_formatted'] = formatLang(self.env,
-                                                                 taxable_amount + non_taxable_amount + tax_amount,
-                                                                 currency_obj=currency)
+        prepare_tax["grand_total_amount"] = (
+            taxable_amount + non_taxable_amount + tax_amount
+        )
+        prepare_tax["grand_total_amount_formatted"] = formatLang(
+            self.env,
+            taxable_amount + non_taxable_amount + tax_amount,
+            currency_obj=currency,
+        )
         #
-        prepare_tax['subtotals_order'] = ['Subtotal', 'Taxable Amount', 'Non Taxable Amount', 'Tax(15%)']
+        prepare_tax["subtotals_order"] = [
+            "Subtotal",
+            "Taxable Amount",
+            "Non Taxable Amount",
+            "Tax(15%)",
+        ]
 
         return prepare_tax
 
 
 class AddisInvoiceExchangeInherited(models.Model):
-    _inherit = 'account.move'
+    _inherit = "account.move"
 
-    @api.onchange('partner_id')
+    @api.onchange("partner_id")
     def partner_filter(self):
-        return {'domain': {'partner_id': [('id', '!=', self.company_id.partner_id.id)]}}
+        return {"domain": {"partner_id": [("id", "!=", self.company_id.partner_id.id)]}}
 
-    IRN = fields.Char(string='IRN')
-    acknowledgement_number = fields.Char(string='Acknowledgement Number')
-    acknowledgement_date = fields.Char(string='Acknowledgement Date')
-    signed_invoice = fields.Char(string='Signed Invoice')
-    signed_qr_code = fields.Char(string='Signed QR Code')
-    created_date = fields.Char(string='Created Date')
-    created_by = fields.Char(string='Created By')
-    invoice_status = fields.Selection([('pending', 'Pending'), ('registered', 'Registered'), ('failed', 'Failed')],
-                                      required=True, readonly=True, copy=False, tracking=True, default='pending')
+    IRN = fields.Char(string="IRN")
+    acknowledgement_number = fields.Char(string="Acknowledgement Number")
+    acknowledgement_date = fields.Char(string="Acknowledgement Date")
+    signed_invoice = fields.Char(string="Signed Invoice")
+    signed_qr_code = fields.Char(string="Signed QR Code")
+    created_date = fields.Char(string="Created Date")
+    created_by = fields.Char(string="Created By")
+    invoice_status = fields.Selection(
+        [("pending", "Pending"), ("registered", "Registered"), ("failed", "Failed")],
+        required=True,
+        readonly=True,
+        copy=False,
+        tracking=True,
+        default="pending",
+    )
 
-    e_invoicing = fields.Boolean(string='E-invoicing Sent', default=False)
-    partner_e_invoicing = fields.Boolean(string='is E-Invoice User', default=False)
+    e_invoicing = fields.Boolean(string="E-invoicing Sent", default=False)
+    partner_e_invoicing = fields.Boolean(string="is E-Invoice User", default=False)
 
     #   --------------- Override Methods   ---------------
 
@@ -102,27 +125,32 @@ class AddisInvoiceExchangeInherited(models.Model):
     #   --------------- Report Methods    ---------------
 
     def signed_invoice_decode_for_print(self, signed_qr_code):
-        payment_json = {"invoice_reference": self.name, "customer": self.partner_id.name,
-                        "customer_tin": self.partner_id.vat}
+        payment_json = {
+            "invoice_reference": self.name,
+            "customer": self.partner_id.name,
+            "customer_tin": self.partner_id.vat,
+        }
         return str(payment_json)
 
     #   --------------- Exchange Methods    ---------------
 
     def seller_invoice_to_buyer(self):
         invoice_ack_avro = InvoiceAcknowledgement.invoice_acknowledgement_schema
-        client = pulsar.Client("pulsar://192.168.100.208:6650")
+        client = pulsar.Client("pulsar://196.189.124.178:6650")
         exchange_producer = client.create_producer(
-            'persistent://addisadmin/invoice/exchange')
+            "persistent://addisadmin/invoice/exchange"
+        )
 
         message = {
-            'IRN': self.IRN or '',
-            'AckNo': self.acknowledgement_number if self.IRN else '',
-            'AckDt': self.acknowledgement_date or '',
-            'Signed_invoice': self.signed_invoice or '',
-            'Created_Date': self.created_date or '',
-            'Created_by': self.created_by or '',
-            'Inv_Status': self.invoice_status.lower() if self.invoice_status else '',
-            'Signed_QRCode': self.signed_qr_code or ''}
+            "IRN": self.IRN or "",
+            "AckNo": self.acknowledgement_number if self.IRN else "",
+            "AckDt": self.acknowledgement_date or "",
+            "Signed_invoice": self.signed_invoice or "",
+            "Created_Date": self.created_date or "",
+            "Created_by": self.created_by or "",
+            "Inv_Status": self.invoice_status.lower() if self.invoice_status else "",
+            "Signed_QRCode": self.signed_qr_code or "",
+        }
 
         schema = avro.schema.parse(json.dumps(invoice_ack_avro))
         writer = DatumWriter(schema)
@@ -131,7 +159,10 @@ class AddisInvoiceExchangeInherited(models.Model):
         writer.write(message, encoder)
 
         avro_bytes = bytes_writer.getvalue()
-        exchange_producer.send(avro_bytes, properties={"key": str(self.partner_id.name).replace(' ', '').lower()})
+        exchange_producer.send(
+            avro_bytes,
+            properties={"key": str(self.partner_id.name).replace(" ", "").lower()},
+        )
         self.e_invoicing = True
 
         # log_avro_schema = logSchema.log_tracking_schema
@@ -205,22 +236,35 @@ class AddisInvoiceExchangeInherited(models.Model):
 
     def action_post(self):
         parent_post = super(AddisInvoiceExchangeInherited, self).action_post()
-        if self.move_type == 'out_invoice':
+        if self.move_type == "out_invoice":
             if asyncio.run(producer.invoice_producer(self)):
                 # asyncio.run(producer.invoice_log_tracking_producer_consume(self))
                 return parent_post
             else:
-                raise AccessError("Couldn't register the Invoice please try again later. Sorry for the inconvenience")
-
+                raise AccessError(
+                    "Couldn't register the Invoice please try again later. Sorry for the inconvenience"
+                )
 
     def addis_system_vendor_bill_consumer(self):
         all_active_thread_names = [thread.name for thread in enumerate()]
 
-        vb_thread_name = 'addis_systems_vendor_bill_listener'
+        vb_thread_name = "addis_systems_vendor_bill_listener"
         if vb_thread_name not in all_active_thread_names:
-            _logger.info('Starting Thread %s for company: %s', vb_thread_name, self.env.company.name)
-            vb_message_waiter_thread = Thread(target=consumer.vendor_bill_consumer_asynch, args=(self,),name=vb_thread_name)
+            _logger.info(
+                "Starting Thread %s for company: %s",
+                vb_thread_name,
+                self.env.company.name,
+            )
+            vb_message_waiter_thread = Thread(
+                target=consumer.vendor_bill_consumer_asynch,
+                args=(self,),
+                name=vb_thread_name,
+            )
             vb_message_waiter_thread.daemon = True
             vb_message_waiter_thread.start()
         else:
-            _logger.info('Skipping Thread %s for company: %s', vb_thread_name, self.env.company.name)
+            _logger.info(
+                "Skipping Thread %s for company: %s",
+                vb_thread_name,
+                self.env.company.name,
+            )
