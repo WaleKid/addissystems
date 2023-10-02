@@ -136,7 +136,7 @@ class AddisInvoiceExchangeInherited(models.Model):
 
     def seller_invoice_to_buyer(self):
         invoice_ack_avro = InvoiceAcknowledgement.invoice_acknowledgement_schema
-        client = pulsar.Client("pulsar://196.189.124.178:6650")
+        client = pulsar.Client("pulsar://192.168.100.208:6650")
         exchange_producer = client.create_producer(
             "persistent://addisadmin/invoice/exchange"
         )

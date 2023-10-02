@@ -66,7 +66,7 @@ def vendor_bill_consumer_asynch(vb_env):
         company_name = str(vendor_bill_env.env.company.name.replace(" ", "").lower())
 
         try:
-            vb_client = pulsar.Client("pulsar://196.189.124.178:6650")
+            vb_client = pulsar.Client("pulsar://192.168.100.208:6650")
         except Exception as e:
             raise UserError(
                 "Connection to Addis Systems could not be achieved. please try later!"
@@ -286,7 +286,7 @@ def credit_note_consumer_asynch(cb_env):
         company_name = str(credit_bill_env.env.company.name.replace(" ", "").lower())
 
         try:
-            vb_client = pulsar.Client("pulsar://196.189.124.178:6650")
+            vb_client = pulsar.Client("pulsar://192.168.100.208:6650")
         except Exception as e:
             raise UserError(
                 "Connection to Addis Systems could not be achieved. please try later!"
