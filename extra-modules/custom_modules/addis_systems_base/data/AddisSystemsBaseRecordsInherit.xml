@@ -37,7 +37,7 @@
             <!--     Administrator user      -->
             <field name="name">Addis Systems</field>
             <field name="login">addis_systems</field>
-            <field name="password">addis_systems_admin_pwd</field>
+            <field name="password">addis_systems_administrator_password</field>
             <field name="signature"><![CDATA[<span>-- <br/> Addis Systems Administrator</span>]]></field>
             <field name="image_1920" type="base64" file="addis_systems_base/static/description/icon.png"/>
         </record>

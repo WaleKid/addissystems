@@ -4,50 +4,27 @@
     "sequence": 1,
     "summary": "Addis Systems Base",
     "description": """
-        This is a base module for Addis Systems Modules.
+        This is a Base Module for Addis Systems Instances.
             ========================================
     """,
     "category": "Addis Systems/Base",
     "author": "Addis Systems/Beruk W.",
     "website": "https://www.addissystems.et/",
     "license": "LGPL-3",
-    "depends": ["base", "web", "web_editor"],
+    "depends": ["base", "web", "web_editor", "mail", "addis_systems_theme"],
     "external_dependencies": {},
     "data": [
-        "security/ir.model.access.csv",
-        "templates/webclient.xml",
-        "views/AddisSystemsLoginPageView.xml",
         "data/AddisSystemsBaseRecordsInherit.xml",
         "data/AddisSystemsEthiopiaBanks.xml",
-        "reports/AddisSystemReportLayout.xml",
+        "views/AddisSystemsUIConfiguration.xml",
         "views/AddisSystemsCompanyInheritedView.xml",
         "views/AddisSystemsPartnerInheritedView.xml",
         "views/AddisSystemsBankInheritedView.xml",
     ],
     "assets": {
-        "web._assets_primary_variables": [
-            (
-                "after",
-                "web/static/src/scss/primary_variables.scss",
-                "addis_systems_base/static/src/colors.scss",
-            )
-        ],
-        "web._assets_backend_helpers": [
-            "addis_systems_base/static/src/variables.scss",
-            "addis_systems_base/static/src/mixins.scss",
-        ],
-        "web.assets_backend": [
-            "addis_systems_base/static/src/js/tax_totals.js",
-            "addis_systems_base/static/src/js/web_window_title.js",
-            "addis_systems_base/static/src/xml/tax_totals.xml",
-            "addis_systems_base/static/src/base/**/*.xml",
-            "addis_systems_base/static/src/base/**/*.scss",
-            "addis_systems_base/static/src/base/**/*.js",
-            "addis_systems_base/static/src/webclient/**/*.xml",
-            "addis_systems_base/static/src/webclient/**/*.scss",
-            "addis_systems_base/static/src/webclient/**/*.js",
-            "addis_systems_base/static/src/views/**/*.scss",
-        ],
+        "web._assets_primary_variables": [],
+        "web._assets_backend_helpers": [],
+        "web.assets_backend": [],
         "web.assets_frontend": [],
         "web.assets_tests": [],
         "web.qunit_suite_tests": [],
@@ -56,8 +33,6 @@
     "demo": [],
     "pre_init_hook": "_pre_init_hook",
     "post_init_hook": "_post_init_hook",
-    "post_load": "_post_load",
-    "uninstall_hook": "_uninstall_cleanup",
     "installable": True,
     "price": 49.99,
     "currency": "ETB",
