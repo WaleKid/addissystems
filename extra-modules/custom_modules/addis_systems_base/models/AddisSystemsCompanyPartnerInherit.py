@@ -126,6 +126,8 @@ class AddisSystemsCompanyInherited(models.Model):
             print("                                     Addis Systems Consumer Service has started for company", self.env.company.name, )
             print("------------------------------------------------------------------------------------------------------------------------------------------------")
             return client_dict
+        else:
+            _logger.warning('Company Information %s is the default value,Please configured your company information for exchange', self.env.company.name)
 
     @api.model_create_multi
     def create(self, vals_list):
