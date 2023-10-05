@@ -55,14 +55,12 @@ class DatabaseInherited(Database):
 
     @http.route('/web/database/selector', type='http', auth="none")
     def selector(self, **kw):
-        print('/web/database/selector')
         if request.db:
             request.env.cr.close()
         return self._render_template(manage=False)
 
     @http.route('/web/database/manager', type='http', auth="none")
     def manager(self, **kw):
-        print('/web/database/manager')
         if request.db:
             request.env.cr.close()
         return self._render_template()

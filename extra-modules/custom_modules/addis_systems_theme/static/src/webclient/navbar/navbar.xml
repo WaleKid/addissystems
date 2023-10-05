@@ -13,7 +13,7 @@
 			<AppsMenu hotkey="'h'"
                       title="'Home Menu'"
                       class="'o_navbar_apps_menu'"
-                      manualOnly="true">
+                      manualOnly="false">
 				<t t-set-slot="toggler">
 					<i class="fa fa-bars"/>
 				</t>
