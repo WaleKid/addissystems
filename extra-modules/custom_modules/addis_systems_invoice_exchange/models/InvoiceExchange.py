@@ -62,7 +62,7 @@ class AddisAccountTaxInherited(models.Model):
         )
         #
         prepare_tax["grand_total_amount"] = (
-            taxable_amount + non_taxable_amount + tax_amount
+                taxable_amount + non_taxable_amount + tax_amount
         )
         prepare_tax["grand_total_amount_formatted"] = formatLang(
             self.env,
@@ -241,30 +241,17 @@ class AddisInvoiceExchangeInherited(models.Model):
                 # asyncio.run(producer.invoice_log_tracking_producer_consume(self))
                 return parent_post
             else:
-                raise AccessError(
-                    "Couldn't register the Invoice please try again later. Sorry for the inconvenience"
-                )
+                raise AccessError("Couldn't register the Invoice please try again later. Sorry for the inconvenience")
 
-    def addis_system_vendor_bill_consumer(self):
-        all_active_thread_names = [thread.name for thread in enumerate()]
+    def addis_system_vendor_bill_consumer(self, client):
+        if client:
+            all_active_thread_names = [thread.name for thread in enumerate()]
 
-        vb_thread_name = "addis_systems_vendor_bill_listener"
-        if vb_thread_name not in all_active_thread_names:
-            _logger.info(
-                "Starting Thread %s for company: %s",
-                vb_thread_name,
-                self.env.company.name,
-            )
-            vb_message_waiter_thread = Thread(
-                target=consumer.vendor_bill_consumer_asynch,
-                args=(self,),
-                name=vb_thread_name,
-            )
-            vb_message_waiter_thread.daemon = True
-            vb_message_waiter_thread.start()
-        else:
-            _logger.info(
-                "Skipping Thread %s for company: %s",
-                vb_thread_name,
-                self.env.company.name,
-            )
+            vb_thread_name = "addis_systems_vendor_bill_listener"
+            if vb_thread_name not in all_active_thread_names:
+                _logger.info("Starting Thread %s for company: %s", vb_thread_name, self.env.company.name)
+                vb_message_waiter_thread = Thread(target=consumer.vendor_bill_consumer_asynch, args=(self, client), name=vb_thread_name)
+                vb_message_waiter_thread.daemon = True
+                vb_message_waiter_thread.start()
+            else:
+                _logger.info("Skipping Thread %s for company: %s", vb_thread_name, self.env.company.name)

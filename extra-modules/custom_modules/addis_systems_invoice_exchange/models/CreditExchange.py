@@ -73,26 +73,15 @@ class AddisRefundExchangeInherited(models.Model):
                 "Couldn't register the Order please try again later.\nSorry for the inconvenience"
             )
 
-    def addis_system_credit_note_consumer(self):
-        all_active_thread_names = [thread.name for thread in enumerate()]
+    def addis_system_credit_note_consumer(self, client):
+        if client:
+            all_active_thread_names = [thread.name for thread in enumerate()]
 
-        cn_thread_name = "addis_systems_credit_note_listener"
-        if cn_thread_name not in all_active_thread_names:
-            _logger.info(
-                "Starting Thread %s for company: %s",
-                cn_thread_name,
-                self.env.company.name,
-            )
-            cn_message_waiter_thread = Thread(
-                target=consumer.credit_note_consumer_asynch,
-                args=(self,),
-                name=cn_thread_name,
-            )
-            cn_message_waiter_thread.daemon = True
-            cn_message_waiter_thread.start()
-        else:
-            _logger.info(
-                "Skipping Thread %s for company: %s",
-                cn_thread_name,
-                self.env.company.name,
-            )
+            cn_thread_name = "addis_systems_credit_note_listener"
+            if cn_thread_name not in all_active_thread_names:
+                _logger.info("Starting Thread %s for company: %s", cn_thread_name, self.env.company.name)
+                cn_message_waiter_thread = Thread(target=consumer.credit_note_consumer_asynch, args=(self, client), name=cn_thread_name)
+                cn_message_waiter_thread.daemon = True
+                cn_message_waiter_thread.start()
+            else:
+                _logger.info("Skipping Thread %s for company: %s", cn_thread_name, self.env.company.name)

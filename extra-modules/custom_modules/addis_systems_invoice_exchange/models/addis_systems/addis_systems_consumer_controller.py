@@ -16,7 +16,7 @@ _logger = logging.getLogger(__name__)
 TIMEOUT = 150
 
 
-def vendor_bill_consumer_asynch(vb_env):
+def vendor_bill_consumer_asynch(vb_env, client):
     async def invoice_decoder(acknowledgement_number):
         decoded_invoice = None
         base_endpoint_url = "https://invoice-reg.api.qa.addispay.et/getInvoice/"
@@ -26,82 +26,48 @@ def vendor_bill_consumer_asynch(vb_env):
             decoded_invoice = response.json()
         elif response.status_code == 208:
             response_meaning = "Invoice already cleared"
-            _logger.error(
-                "Addis Systems %s Invoice couldn't be decoded:%s:%s",
-                acknowledgement_number,
-                response.status_code,
-                response_meaning,
-            )
+            _logger.error("Addis Systems %s Invoice couldn't be decoded:%s:%s", acknowledgement_number, response.status_code, response_meaning)
         elif response.status_code == 400:
             response_meaning = "Record is not found"
-            _logger.error(
-                "Addis Systems %s Invoice couldn't be decoded:%s:%s",
-                acknowledgement_number,
-                response.status_code,
-                response_meaning,
-            )
+            _logger.error("Addis Systems %s Invoice couldn't be decoded:%s:%s", acknowledgement_number, response.status_code, response_meaning)
         elif response.status_code == 502:
             response_meaning = "Bad Gateway"
-            _logger.error(
-                "Addis Systems %s Invoice couldn't be decoded:%s:%s",
-                acknowledgement_number,
-                response.status_code,
-                response_meaning,
-            )
+            _logger.error("Addis Systems %s Invoice couldn't be decoded:%s:%s", acknowledgement_number, response.status_code, response_meaning)
         else:
             response_meaning = "API End Point is not responding"
-            _logger.error(
-                "Addis Systems %s Invoice couldn't be decoded:%s:%s",
-                acknowledgement_number,
-                response.status_code,
-                response_meaning,
-            )
-
+            _logger.error("Addis Systems %s Invoice couldn't be decoded:%s:%s", acknowledgement_number, response.status_code, response_meaning)
         return decoded_invoice
 
     def vendor_bill_pulsar_waiter(vendor_bill_env):
-        vb_client = consumer = None
+        consumer = None
         invoice_ack__avro = InvoiceAcknowledgement.invoice_acknowledgement_schema
         schema = avro.schema.parse(json.dumps(invoice_ack__avro))
         company_name = str(vendor_bill_env.env.company.name.replace(" ", "").lower())
 
         try:
-            vb_client = pulsar.Client("pulsar://192.168.100.208:6650")
+            topic_name = "persistent://addisadmin/invoice/exchange"
+            consumer_configuration = {"subscription_name": company_name}
+            consumer = client.subscribe(topic_name, **consumer_configuration)
         except Exception as e:
-            raise UserError(
-                "Connection to Addis Systems could not be achieved. please try later!"
-            ) from e
+            _logger.warning("Addis Systems topic subscription couldn't be achieved", e)
         finally:
-            if vb_client:
-                topic_name = "persistent://addisadmin/invoice/exchange"
-                consumer_configuration = {"subscription_name": company_name}
-                try:
-                    consumer = vb_client.subscribe(topic_name, **consumer_configuration)
-                except Exception as e:
-                    _logger.warning(
-                        "Addis Systems topic subscription couldn't be achieved", e
-                    )
-                finally:
-                    if consumer:
-                        while True:
-                            if msg := consumer.receive():
-                                key = msg.properties()["key"]
-                                if company_name == key:
-                                    bytes_writer = io.BytesIO(msg.data())
-                                    decoder = avro.io.BinaryDecoder(bytes_writer)
-                                    datum_reader = avro.io.DatumReader(schema)
-                                    datajson = datum_reader.read(decoder)
+            if consumer:
+                while True:
+                    if msg := consumer.receive():
+                        key = msg.properties()["key"]
+                        if company_name == key:
+                            bytes_writer = io.BytesIO(msg.data())
+                            decoder = avro.io.BinaryDecoder(bytes_writer)
+                            datum_reader = avro.io.DatumReader(schema)
+                            dump = json.dumps(datum_reader.read(decoder))
+                            datajson = json.loads(dump)
 
-                                    if datajson and datajson["Signed_invoice"]:
-                                        if decoder := asyncio.run(
-                                            invoice_decoder(datajson["AckNo"])
-                                        ):
-                                            if vendor_bill_create(
-                                                vendor_bill_env, datajson, decoder
-                                            ):
-                                                consumer.acknowledge(msg)
-                                else:
-                                    consumer.negative_acknowledge(msg)
+                            if datajson and datajson["Signed_invoice"]:
+                                if decoder := asyncio.run(invoice_decoder(datajson["AckNo"])):
+                                    if vendor_bill_create(vendor_bill_env, datajson, decoder):
+                                        consumer.acknowledge(msg)
+                        else:
+                            consumer.negative_acknowledge(msg)
 
     def vendor_bill_create(vendor_bill_env, vb_mor_data, vb_decoded_data):
         invoice_reference = vb_decoded_data["Invoice_Reference"]
@@ -117,7 +83,7 @@ def vendor_bill_consumer_asynch(vb_env):
         with vendor_bill_env.env.registry.cursor() as new_cr:
             env = api.Environment(new_cr, SUPERUSER_ID, {})
             if not env["account.move"].search(
-                [("acknowledgement_number", "=", vb_mor_data["AckNo"])]
+                    [("acknowledgement_number", "=", vb_mor_data["AckNo"])]
             ):
                 partner_id = env["res.partner"].search(
                     [
@@ -233,7 +199,7 @@ def vendor_bill_consumer_asynch(vb_env):
     )
 
 
-def credit_note_consumer_asynch(cb_env):
+def credit_note_consumer_asynch(cb_env, client):
     async def credit_note_decoder(acknowledgement_number):
         decoded_invoice = None
         base_endpoint_url = "https://invoice-reg.api.qa.addispay.et/getRefund/"
@@ -246,82 +212,48 @@ def credit_note_consumer_asynch(cb_env):
         elif response.status_code == 400:
             if response.json() == "Invoice already cleared":
                 response_meaning = "Record is not found"
-                _logger.error(
-                    "Addis Systems %s Invoice couldn't be decoded:%s:%s",
-                    acknowledgement_number,
-                    response.status_code,
-                    response_meaning,
-                )
+                _logger.error("Addis Systems %s Refund couldn't be decoded:%s:%s", acknowledgement_number, response.status_code, response_meaning)
             else:
                 response_meaning = "Record is not found"
-                _logger.error(
-                    "Addis Systems %s Refund couldn't be decoded:%s:%s",
-                    acknowledgement_number,
-                    response.status_code,
-                    response_meaning,
-                )
+                _logger.error("Addis Systems %s Refund couldn't be decoded:%s:%s", acknowledgement_number, response.status_code, response_meaning)
         elif response.status_code == 502:
             response_meaning = "Bad Gateway"
-            _logger.error(
-                "Addis Systems %s Refund couldn't be decoded:%s:%s",
-                acknowledgement_number,
-                response.status_code,
-                response_meaning,
-            )
+            _logger.error("Addis Systems %s Refund couldn't be decoded:%s:%s", acknowledgement_number, response.status_code, response_meaning)
         else:
             response_meaning = "API End Point is not responding"
-            _logger.error(
-                "Addis Systems %s Refund couldn't be decoded:%s:%s",
-                acknowledgement_number,
-                response.status_code,
-                response_meaning,
-            )
-
+            _logger.error("Addis Systems %s Refund couldn't be decoded:%s:%s", acknowledgement_number, response.status_code, response_meaning)
         return decoded_invoice
 
     def credit_note_pulsar_waiter(credit_bill_env):
-        vb_client = consumer = None
+        consumer = None
         invoice_ack_schema = InvoiceAcknowledgement.invoice_acknowledgement_schema
         schema = avro.schema.parse(json.dumps(invoice_ack_schema))
         company_name = str(credit_bill_env.env.company.name.replace(" ", "").lower())
 
         try:
-            vb_client = pulsar.Client("pulsar://192.168.100.208:6650")
+            topic_name = "persistent://addisadmin/refund/exchange"
+            consumer_configuration = {"subscription_name": company_name}
+            consumer = client.subscribe(topic_name, **consumer_configuration)
         except Exception as e:
-            raise UserError(
-                "Connection to Addis Systems could not be achieved. please try later!"
-            ) from e
+            _logger.warning("Addis Systems topic subscription couldn't be achieved", e)
         finally:
-            if vb_client:
-                topic_name = "persistent://addisadmin/refund/exchange"
-                consumer_configuration = {"subscription_name": company_name}
-                try:
-                    consumer = vb_client.subscribe(topic_name, **consumer_configuration)
-                except Exception as e:
-                    _logger.warning(
-                        "Addis Systems topic subscription couldn't be achieved", e
-                    )
-                finally:
-                    if consumer:
-                        while True:
-                            if msg := consumer.receive():
-                                key = msg.properties()["key"]
-                                if company_name == key:
-                                    bytes_writer = io.BytesIO(msg.data())
-                                    decoder = avro.io.BinaryDecoder(bytes_writer)
-                                    datum_reader = avro.io.DatumReader(schema)
-                                    datajson = datum_reader.read(decoder)
+            if consumer:
+                while True:
+                    if msg := consumer.receive():
+                        key = msg.properties()["key"]
+                        if company_name == key:
+                            bytes_writer = io.BytesIO(msg.data())
+                            decoder = avro.io.BinaryDecoder(bytes_writer)
+                            datum_reader = avro.io.DatumReader(schema)
+                            dump = json.dumps(datum_reader.read(decoder))
+                            datajson = json.loads(dump)
 
-                                    if datajson and datajson["Signed_invoice"]:
-                                        decoder = asyncio.run(
-                                            credit_note_decoder(datajson["AckNo"])
-                                        )
-                                        if decoder and credit_note_create(
-                                            credit_bill_env, datajson, decoder
-                                        ):
-                                            consumer.acknowledge(msg)
-                                else:
-                                    consumer.negative_acknowledge(msg)
+                            if datajson and datajson["Signed_invoice"]:
+                                decoder = asyncio.run(credit_note_decoder(datajson["AckNo"]))
+                                if decoder and credit_note_create(credit_bill_env, datajson, decoder):
+                                    consumer.acknowledge(msg)
+                        else:
+                            consumer.negative_acknowledge(msg)
 
     def credit_note_create(credit_bill_env, vb_mor_data, vb_decoded_data):
         refund_reference = vb_decoded_data["Invoice_Reference"]
@@ -333,15 +265,8 @@ def credit_note_consumer_asynch(cb_env):
 
         with credit_bill_env.env.registry.cursor() as new_cr:
             env = api.Environment(new_cr, SUPERUSER_ID, {})
-            invoice_record = env["account.move"].search(
-                [("name", "=", refund_reference["Seller_ref_no"])]
-            )
-            if (
-                not env["account.move"].search(
-                    [("acknowledgement_number", "=", vb_mor_data["AckNo"])]
-                )
-                and invoice_record
-            ):
+            invoice_record = env["account.move"].search([("name", "=", refund_reference["Seller_ref_no"])])
+            if not env["account.move"].search([("acknowledgement_number", "=", vb_mor_data["AckNo"])]) and invoice_record:
                 credit_bill_vals = {
                     "partner_id": invoice_record.partner_id.id,
                     "invoice_date": refund_description["Inv_Dt"],
@@ -369,9 +294,7 @@ def credit_note_consumer_asynch(cb_env):
                 product_lines = []
 
                 for products in vb_decoded_data["Invoice_line"]:
-                    product = env["product.template"].search(
-                        [("name", "=", products["product_name"])], limit=1
-                    ) or env["product.template"].create(
+                    product = env["product.template"].search([("name", "=", products["product_name"])], limit=1) or env["product.template"].create(
                         {
                             "name": products["product_name"],
                             "sale_ok": False,
@@ -384,14 +307,7 @@ def credit_note_consumer_asynch(cb_env):
                         }
                     )
 
-                    tax_id = env["account.tax"].search(
-                        [
-                            ("amount_type", "=", products["amount_type"]),
-                            ("type_tax_use", "!=", products["tax_type"]),
-                            ("amount", "=", products["tax_amount"]),
-                        ],
-                        limit=1,
-                    )
+                    tax_id = env["account.tax"].search([("amount_type", "=", products["amount_type"]), ("type_tax_use", "!=", products["tax_type"]), ("amount", "=", products["tax_amount"])], limit=1)
                     product_line = {
                         "product_id": env["product.product"]
                         .search([("product_tmpl_id", "=", product.id)], limit=1)
