@@ -6,7 +6,8 @@ class AddisBaseInvoiceExchangeInherited(models.Model):
 
     def addis_system_connection_init(self):
         root = super(AddisBaseInvoiceExchangeInherited, self).addis_system_connection_init()
-        if client := root["invoice_client"]:
+        if root and root["invoice_client"]:
+            client = root["invoice_client"]
             invoice = self.env['account.move']
             # Vendor Bill Consumer Called
             invoice.addis_system_vendor_bill_consumer(client)
