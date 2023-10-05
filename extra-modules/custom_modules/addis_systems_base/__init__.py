@@ -1,8 +1,5 @@
 from odoo import api, SUPERUSER_ID
-import asyncio
-import xmlrpc.client
-from threading import Thread, enumerate
-from . import models
+from . import models, controllers
 
 
 def _pre_init_hook(cr):
