@@ -29,7 +29,9 @@
                 <xpath expr="//field[@name='client_order_ref']" position="attributes">
                     <attribute name="readonly">1</attribute>
                 </xpath>
-
+                <xpath expr="//field[@name='incoterm']" position="attributes">
+                    <attribute name="attrs">{'readonly': [('catalogue_quotation_id', '!=', False)]}</attribute>
+                </xpath>
                 <xpath expr="//field[@name='order_line']/tree/field[@name='product_id']" position="after">
                     <field name="catalogue_quotation_id" invisible="1"/>
                     <field name="client_order_ref" invisible="1"/>

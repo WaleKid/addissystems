@@ -77,8 +77,10 @@ def stock_receipt_consumer_asynch(stock_env, thread_name):
 
                 bo_confirm = env['stock.backorder.confirmation'].create({'pick_ids': [purchase_default_picking.id]}).with_context(button_validate_picking_ids=[purchase_default_picking.id])
 
+                trial = None
+
                 if to_backorder:
-                    bo_confirm.process()
+                    trial = bo_confirm.process()
                 else:
                     bo_confirm.process_cancel_backorder()
 

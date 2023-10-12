@@ -45,7 +45,8 @@
                         <group>
                             <group>
                                 <field name="partner_id" attrs="{'readonly': [('catalogue_rfc_id', '!=', False)]}"/>
-                                <field name="catalogue_rfc_id" readonly="1"/>
+                                <field name="catalogue_rfc_id" invisible="1" readonly="1"/>
+                                <field name="incoterm_id" readonly="1"/>
                                 <field name="trade_terms" readonly="1"/>
                                 <field name="count_product_transfer" invisible="1"/>
                             </group>

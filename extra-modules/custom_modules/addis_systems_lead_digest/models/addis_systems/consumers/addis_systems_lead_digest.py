@@ -16,9 +16,9 @@ TIMEOUT = 150
 def account_and_part_decoder(buyer_id):
     account_info = None
     party_info = None
-    account_api_end_point = f"https://api.addispay.et/Account/{buyer_id}"
-    party_api_end_point = f"https://party.addispay.et/party/{buyer_id}"
-    headers = {'User-Agent': 'party.addispay.et', 'X-Auth-Token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0NzMyYzIzODNkZmQ5ZTQwOWRjMGZhNiIsImlhdCI6MTY4NTI2OTU3Nn0.tGNpNVOcUaf7mDvNF4jscOr0MnwVRrtIw9FVkaH4t08'}
+    account_api_end_point = f"https://api.addissystems.et/Account/{buyer_id}"
+    party_api_end_point = f"https://party.addissystems.et/party/{buyer_id}"
+    headers = {'User-Agent': 'party.addissystems.et', 'X-Auth-Token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0NzMyYzIzODNkZmQ5ZTQwOWRjMGZhNiIsImlhdCI6MTY4NTI2OTU3Nn0.tGNpNVOcUaf7mDvNF4jscOr0MnwVRrtIw9FVkaH4t08'}
 
     account_response = requests.post(account_api_end_point, timeout=50, headers=headers)
 

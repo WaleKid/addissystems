@@ -19,7 +19,7 @@ TIMEOUT = 150
 def vendor_bill_consumer_asynch(vb_env, client):
     async def invoice_decoder(acknowledgement_number):
         decoded_invoice = None
-        base_endpoint_url = "https://invoice-reg.api.qa.addispay.et/getInvoice/"
+        base_endpoint_url = "https://invoice-reg.api.qa.addissystems.et/getInvoice/"
         api_end_point = base_endpoint_url + acknowledgement_number
         response = requests.get(api_end_point, timeout=TIMEOUT)
         if response.status_code == 200:
@@ -202,7 +202,7 @@ def vendor_bill_consumer_asynch(vb_env, client):
 def credit_note_consumer_asynch(cb_env, client):
     async def credit_note_decoder(acknowledgement_number):
         decoded_invoice = None
-        base_endpoint_url = "https://invoice-reg.api.qa.addispay.et/getRefund/"
+        base_endpoint_url = "https://invoice-reg.api.qa.addissystems.et/getRefund/"
         api_end_point = base_endpoint_url + acknowledgement_number
 
         response = requests.get(api_end_point, timeout=TIMEOUT)

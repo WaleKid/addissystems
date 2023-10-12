@@ -204,7 +204,6 @@ def catalogue_consumer_asynch(catalogue_env, client):
             partner_id.partner_longitude = longitude
 
         # Catalogue Handler
-
         if not env['purchase.order.catalogue'].search([('partner_id', '=', partner_id.id), ('partner_reference', '=', quotation_ref['Catalogue_Request_Reference'])]) and request_id:
             catalogue = env['purchase.order.catalogue'].create(
                 {
@@ -213,7 +212,8 @@ def catalogue_consumer_asynch(catalogue_env, client):
                     'catalogue_rfc_id': request_id.id,
                     'partner_reference': quotation_ref['Catalogue_Request_Reference'],
                     'start_date': quotation_ref['Date_Start'] if quotation_ref['Date_Start'] != 'False' else None,
-                    'date_end': quotation_ref['Date_End'] if quotation_ref['Date_End'] != 'False' else None
+                    'date_end': quotation_ref['Date_End'] if quotation_ref['Date_End'] != 'False' else None,
+                    'incoterm_id': env['account.incoterms'].search([('name', '=', quotation_ref["INCOTERM"])], limit=1).id
                 }
             )
 
@@ -370,7 +370,8 @@ def sales_order_consumer_asynch(sale_order_env, client):
                     'updated_price': False,
                     'user_id': catalogue_quotation.create_uid.id if catalogue_quotation.id else None,
                     'client_order_ref': purchase_order_ref['PO_ref_no'],
-                    'catalogue_quotation_id': catalogue_quotation.id or None
+                    'catalogue_quotation_id': catalogue_quotation.id or None,
+                    'incoterm': catalogue_quotation.incoterm_id.id
                 })
                 for products in so_data['Purchase_line']:
                     if product_available := env['product.template'].search([('name', '=', products["Product_Name"])], limit=1):
@@ -414,7 +415,8 @@ def sales_order_consumer_asynch(sale_order_env, client):
                     'updated_price': True,
                     'user_id': catalogue_quotation.create_uid.id if catalogue_quotation.id else None,
                     'client_order_ref': purchase_order_ref['PO_ref_no'],
-                    'catalogue_quotation_id': catalogue_quotation.id or None
+                    'catalogue_quotation_id': catalogue_quotation.id or None,
+                    'incoterm': catalogue_quotation.incoterm_id.id
                 })
                 for products in so_data['Purchase_line']:
                     if product_available := env['product.template'].search([('name', '=', products["Product_Name"])], limit=1):

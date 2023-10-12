@@ -21,6 +21,9 @@ catalogue_quotation_schema = {
             }, {
                 "name": "Date_End",
                 "type": "string"
+            }, {
+                "name": "INCOTERM",
+                "type": "string"
             }]
         }]
     }, {

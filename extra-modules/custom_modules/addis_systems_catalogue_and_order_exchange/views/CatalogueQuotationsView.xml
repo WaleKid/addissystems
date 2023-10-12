@@ -23,7 +23,8 @@
                         <group>
                             <group>
                                 <field name="partner_id" attrs="{'readonly': [('catalogue_request_id', '!=', False)]}"/>
-                                <field name="catalogue_request_id" string="Request Reference"/>
+                                <field name="catalogue_request_id" invisible="1" string="Request Reference"/>
+                                <field name="incoterm_id" attrs="{'readonly': [('state', 'in', ['sent', 'canceled'])]}"/>
                                 <field name="trade_terms" readonly="1"/>
                             </group>
                             <group>

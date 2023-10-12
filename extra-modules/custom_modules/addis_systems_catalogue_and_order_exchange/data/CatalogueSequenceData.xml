@@ -13,6 +13,16 @@
             <value eval="[ref('addis_systems_purchase_agreement_setting_setter')]"/>
         </function>
 
+        <!--    Activate Incoterm Option    -->
+
+        <record model="res.config.settings" id="addis_systems_incoterm_setting_setter">
+            <field name="group_display_incoterm" eval="1"/>
+        </record>
+
+        <function name="execute" model="res.config.settings">
+            <value eval="[ref('addis_systems_incoterm_setting_setter')]"/>
+        </function>
+
         <!--    Sequence    -->
 
         <record id="sequence_catalogue_rfc" model="ir.sequence">

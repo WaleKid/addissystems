@@ -69,6 +69,7 @@ class AddisSystemsRequestForCatalogue(models.Model):
                 for po in self.env['purchase.order'].search([('requisition_id', '=', blanket.id)]):
                     po.rfc_id = self.id
                     po.catalogue_id = blanket.catalogue_id.id
+                    po.incoterm_id = blanket.catalogue_id.incoterm_id.id
             req.blanket_order_count = self.env['purchase.requisition'].search_count([('catalogue_rfc_id', '=', req.id)])
 
     def _compute_blanket_order(self):
@@ -77,6 +78,7 @@ class AddisSystemsRequestForCatalogue(models.Model):
                 for po in self.env['purchase.order'].search_count([('requisition_id', '=', blanket.id)]):
                     po.rfc_id = self.id
                     po.catalogue_id = blanket.catalogue_id.id
+                    po.incoterm_id = blanket.catalogue_id.incoterm_id.id
             req.blanket_orders = self.env['purchase.requisition'].search([('catalogue_rfc_id', '=', req.id)])
 
     def _compute_rfq_and_purchase_order_count(self):
@@ -159,6 +161,7 @@ class AddisSystemsCatalogue(models.Model):
     state = fields.Selection([('draft', 'Draft'), ('sent', 'Sent')], required=True, default='draft')
     catalogue_rfc_id = fields.Many2one('purchase.order.rfc', string='RFC Reference', required=True)
     trade_terms = fields.Selection(related='catalogue_rfc_id.trade_terms', string='Trade Terms')
+    incoterm_id = fields.Many2one('account.incoterms', 'Incoterm', help="International Commercial Terms are a series of predefined commercial terms used in international transactions.")
 
     partner_id = fields.Many2one('res.partner', string='Partner', required=True, domain=_get_partner_domain)
     partner_reference = fields.Char(string="Partner Reference", required=True)
@@ -206,6 +209,7 @@ class AddisSystemsCatalogue(models.Model):
                 "origin": self.catalogue_rfc_id.name,
                 "catalogue_id": self.id,
                 "updated_price": bool(self.catalogue_with_price),
+                "incoterm_id": self.incoterm_id.id
             }
 
             quotation = self.env['purchase.order'].create(quotation_data)
@@ -365,6 +369,9 @@ class AddisPurchaseExchangeInherited(models.Model):
     def _compute_price_status(self):
         for po in self:
             po.updated_price = bool(po.requisition_id)
+            print()
+            if po.requisition_id and po.catalogue_id:
+                po.incoterm_id = po.catalogue_id.incoterm_id.id
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -378,6 +385,7 @@ class AddisPurchaseExchangeInherited(models.Model):
             if not vals.get('catalogue_id') and vals.get('requisition_id'):
                 vals.update({'rfc_id': self.env['purchase.requisition'].search([('id', '=', vals.get('requisition_id'))], limit=1).catalogue_rfc_id.id})
                 vals.update({'catalogue_id': self.env['purchase.requisition'].search([('id', '=', vals.get('requisition_id'))], limit=1).catalogue_id.id})
+                vals.update({'incoterm_id': self.env['purchase.requisition'].search([('id', '=', vals.get('requisition_id'))], limit=1).catalogue_id.incoterm_id.id})
 
         return super(AddisPurchaseExchangeInherited, self).create(vals_list)
 

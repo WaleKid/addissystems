@@ -120,6 +120,7 @@ class AddisSystemsCatalogueQuotations(models.Model):
     pass_to_prospective_customer = fields.Boolean(string='Pass to Customer', default=False)
     with_price = fields.Boolean(related='catalogue_request_id.catalogue_with_price')
     trade_terms = fields.Selection(related='catalogue_request_id.trade_terms')
+    incoterm_id = fields.Many2one('account.incoterms', 'Incoterm', help="International Commercial Terms are a series of predefined commercial terms used in international transactions.")
 
     descriptive_literature = fields.Html(related='catalogue_request_id.descriptive_literature', string='Descriptive Literature')
     condition = fields.Html(related='catalogue_request_id.condition', string='Condition')

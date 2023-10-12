@@ -117,7 +117,8 @@ def send_catalogue_quotation(catalogue_quotation):
             "Catalogue_Quotation_Reference": str(catalogue_quotation.pass_to_prospective_customer),
             "RFC_Reference": str(catalogue_quotation.partner_rfc_reference),
             "Date_Start": str(catalogue_quotation.start_date),
-            "Date_End": str(catalogue_quotation.date_end)
+            "Date_End": str(catalogue_quotation.date_end),
+            "INCOTERM": str(catalogue_quotation.incoterm_id.name)
         },
         "Catalogue_Products": catalogue_quotation_products,
         "Seller": {

@@ -16,6 +16,7 @@ class AddisSystemsCatalogueRequestCreateWizard(models.TransientModel):
     date_end = fields.Date(string='Blanket Date Start', required=False)
 
     trade_terms = fields.Selection(related='catalogue_request.trade_terms', string='Trade Terms')
+    incoterm_id = fields.Many2one('account.incoterms', 'Incoterm', help="International Commercial Terms are a series of predefined commercial terms used in international transactions.")
 
     descriptive_literature = fields.Html(related='catalogue_request.descriptive_literature')
     condition = fields.Html(related='catalogue_request.condition')
@@ -40,7 +41,7 @@ class AddisSystemsCatalogueRequestCreateWizard(models.TransientModel):
                 quotation_line = self.env['sale.order.catalogue_quotations.line'].create({'product_id': line.product_id.id})
             product_line += [quotation_line.id]
         create_quotation = self.env['sale.order.catalogue_quotations'].create(
-            {'partner_id': self.catalogue_request.partner_id.id, 'pass_to_prospective_customer': self.pass_to_prospective_customer, 'catalogue_request_id': self.catalogue_request.id, 'catalogue_quotation_line': product_line, 'start_date': self.start_date, 'date_end': self.date_end})
+            {'partner_id': self.catalogue_request.partner_id.id, 'pass_to_prospective_customer': self.pass_to_prospective_customer, 'catalogue_request_id': self.catalogue_request.id, 'catalogue_quotation_line': product_line, 'start_date': self.start_date, 'date_end': self.date_end, 'incoterm_id': self.incoterm_id.id})
 
         if create_quotation:
             self.catalogue_request.state = 'quoted'
@@ -48,7 +49,14 @@ class AddisSystemsCatalogueRequestCreateWizard(models.TransientModel):
         for activity in self.env['mail.activity'].search([('res_id', '=', self.catalogue_request.id), ('user_id', '!=', self.env.user.id)]):
             activity.unlink()
 
-        return create_quotation
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': 'sale.order.catalogue_quotations',
+            'res_id': create_quotation.id,
+            'name': create_quotation.name,
+            'view_mode': 'form',
+            'views': [(False, "form")],
+        }
 
     def generate_quotation_and_send(self):
         product_line = []
@@ -59,7 +67,7 @@ class AddisSystemsCatalogueRequestCreateWizard(models.TransientModel):
                 quotation_line = self.env['sale.order.catalogue_quotations.line'].create({'product_id': line.product_id.id})
             product_line += [quotation_line.id]
         create_quotation = self.env['sale.order.catalogue_quotations'].create(
-            {'partner_id': self.catalogue_request.partner_id.id, 'pass_to_prospective_customer': self.pass_to_prospective_customer, 'catalogue_request_id': self.catalogue_request.id, 'catalogue_quotation_line': product_line, 'start_date': self.start_date, 'date_end': self.date_end})
+            {'partner_id': self.catalogue_request.partner_id.id, 'pass_to_prospective_customer': self.pass_to_prospective_customer, 'catalogue_request_id': self.catalogue_request.id, 'catalogue_quotation_line': product_line, 'start_date': self.start_date, 'date_end': self.date_end, 'incoterm_id': self.incoterm_id.id})
 
         sent = create_quotation.seller_action_send_catalogue_quotation_to_buyer()
 
@@ -69,7 +77,14 @@ class AddisSystemsCatalogueRequestCreateWizard(models.TransientModel):
         for activity in self.env['mail.activity'].search([('res_id', '=', self.catalogue_request.id), ('user_id', '!=', self.env.user.id)]):
             activity.unlink()
 
-        return create_quotation
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': 'sale.order.catalogue_quotations',
+            'res_id': create_quotation.id,
+            'name': create_quotation.name,
+            'view_mode': 'form',
+            'views': [(False, "form")],
+        }
 
 
 class AddisSystemsCatalogueRequestCreateWizardLine(models.TransientModel):
