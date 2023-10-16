@@ -76,7 +76,7 @@ class AddisSystemsRequestForCatalogue(models.Model):
         for req in self:
             for blanket in self.env['purchase.requisition'].search([('catalogue_rfc_id', '=', req.id)]):
                 for po in self.env['purchase.order'].search_count([('requisition_id', '=', blanket.id)]):
-                    po.rfc_id = self.id
+                    po.rfc_id = req.id
                     po.catalogue_id = blanket.catalogue_id.id
                     po.incoterm_id = blanket.catalogue_id.incoterm_id.id
             req.blanket_orders = self.env['purchase.requisition'].search([('catalogue_rfc_id', '=', req.id)])
@@ -182,13 +182,11 @@ class AddisSystemsCatalogue(models.Model):
 
     def _compute_child_catalogue_quotation_count(self):
         for req in self:
-            req.child_quotation_count = self.env['purchase.order'].search_count(
-                [('catalogue_id', '=', self.id)])
+            req.child_quotation_count = self.env['purchase.order'].search_count([('catalogue_id', '=', req.id)])
 
     def _compute_child_blanket_order_count(self):
         for req in self:
-            req.child_blanket_count = self.env['purchase.requisition'].search_count(
-                [('catalogue_id', '=', self.id)])
+            req.child_blanket_count = self.env['purchase.requisition'].search_count([('catalogue_id', '=', req.id)])
 
     def _compute_transferred_product_count(self):
         for req in self:
