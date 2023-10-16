@@ -122,7 +122,7 @@ class AddisSystemsRequestForCatalogue(models.Model):
         self.state = 'canceled'
 
     def seller_action_send_rfc_to_seller(self):
-        tenants_list_url = "http://192.168.100.208:8080/admin/v2/tenants"
+        tenants_list_url = "http://192.168.100.209:8080/admin/v2/tenants"
         tenants_list = requests.get(tenants_list_url, timeout=TIMEOUT)
 
         for partner in self.partner_ids:
@@ -375,7 +375,7 @@ class AddisPurchaseExchangeInherited(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
-        tenants_list_url = "http://192.168.100.208:8080/admin/v2/tenants"
+        tenants_list_url = "http://192.168.100.209:8080/admin/v2/tenants"
         tenants_list = requests.get(tenants_list_url, timeout=TIMEOUT)
         for vals in vals_list:
             partner = self.env['res.partner'].search([('id', '=', vals.get('partner_id'))])
@@ -392,7 +392,7 @@ class AddisPurchaseExchangeInherited(models.Model):
     def button_confirm(self):
         # Temporary method for restricting user sending e-invoice to partner
         is_partner_e_invoice_user = False
-        tenants_list_url = "http://192.168.100.208:8080/admin/v2/tenants"
+        tenants_list_url = "http://192.168.100.209:8080/admin/v2/tenants"
         tenants_list = requests.get(tenants_list_url, timeout=TIMEOUT)
         if str(self.partner_id.name).replace(' ', '').lower() in tenants_list.json():
             is_partner_e_invoice_user = True

@@ -12,8 +12,8 @@ class AddisSystemsCatalogueRequestCreateWizard(models.TransientModel):
     pass_to_prospective_customer = fields.Boolean(related='catalogue_request.pass_to_prospective_customer', string='Pass to Customer')
     catalogue_with_price = fields.Boolean(related='catalogue_request.catalogue_with_price', string='With Price')
 
-    start_date = fields.Date(string='Blanket Date End', required=False)
-    date_end = fields.Date(string='Blanket Date Start', required=False)
+    start_date = fields.Date(string='Blanket Date End', required=False, help="Since it's a blanket order the catalogue will have the current product public price, in this field provide the date span the price sent now will be acceptable")
+    date_end = fields.Date(string='Blanket Date Start', required=False, help="Since it's a blanket order the catalogue will have the current product public price, in this field provide the date span the price sent now will be acceptable")
 
     trade_terms = fields.Selection(related='catalogue_request.trade_terms', string='Trade Terms')
     incoterm_id = fields.Many2one('account.incoterms', 'Incoterm', help="International Commercial Terms are a series of predefined commercial terms used in international transactions.")

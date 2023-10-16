@@ -23,7 +23,7 @@ def stock_receipt_consumer_asynch(stock_env, thread_name):
     def stock_receipt_pulsar_waiter(stock_env):
         consumer = None
 
-        client = pulsar.Client("pulsar://192.168.100.208:6650")
+        client = pulsar.Client("pulsar://192.168.100.209:6650")
         topic_name = "persistent://" + stock_env.env.company.name.replace(' ', '').lower() + "/orders/receipt"
         consumer_configuration = {"subscription_name": str(stock_env.env.company.name).replace(' ', '').lower()}
         try:
@@ -77,15 +77,13 @@ def stock_receipt_consumer_asynch(stock_env, thread_name):
 
                 bo_confirm = env['stock.backorder.confirmation'].create({'pick_ids': [purchase_default_picking.id]}).with_context(button_validate_picking_ids=[purchase_default_picking.id])
 
-                trial = None
-
                 if to_backorder:
-                    trial = bo_confirm.process()
+                    bo_confirm.process()
                 else:
                     bo_confirm.process_cancel_backorder()
 
                 return True
-            elif purchase_order_id := env['purchase.order'].search([('name', '=', "P00001"), ('partner_id', '=', partner_id.id), ('state', 'not in', ['purchase', 'done'])], limit=1):
+            else:
                 print("\nPurchase Order Not Validated Yet")
                 return False
 
@@ -99,7 +97,7 @@ def stock_delivery_confirmation_consumer_asynch(stock_env, thread_name):
     def stock_delivery_confirmation_pulsar_waiter(stock_env):
         consumer = None
 
-        client = pulsar.Client("pulsar://192.168.100.208:6650")
+        client = pulsar.Client("pulsar://192.168.100.209:6650")
         topic_name = "persistent://" + stock_env.env.company.name.replace(' ', '').lower() + "/orders/delivery"
         consumer_configuration = {"subscription_name": str(stock_env.env.company.name).replace(' ', '').lower()}
         try:
@@ -134,8 +132,13 @@ def stock_delivery_confirmation_consumer_asynch(stock_env, thread_name):
 
             if sales_order_id := env['sale.order'].search([('client_order_ref', '=', stock_receipt_reference["Seller_order_ref_no"]), ('partner_id', '=', partner_id.id), ('state', 'in', ['sale', 'done'])], limit=1):
                 count_pickings = env['stock.picking'].search_count([('origin', '=', sales_order_id.name), ('partner_id', '=', partner_id.id), ])
-                if confirmed_picking := env['stock.picking'].search(
-                        [('dispatch_reference_number', '=', stock_receipt_reference['Disp_advice_ref_no']), ('origin', '=', sales_order_id.name), ('partner_id', '=', partner_id.id), ('state', 'in', ['on_delivery'])], limit=1):
+                if confirmed_picking := env['stock.picking'].search([('dispatch_reference_number', '=', stock_receipt_reference['Disp_advice_ref_no']), ('origin', '=', sales_order_id.name), ('partner_id', '=', partner_id.id), ('state', 'in', ['on_delivery'])], limit=1):
+                    for received_line in stock_receipt_line:
+                        product_tmpl_id = env['product.template'].search([('name', '=', received_line['product_name'])])
+                        for product in env['product.product'].search([('product_tmpl_id', 'in', product_tmpl_id.ids)]):
+                            move = confirmed_picking.move_ids_without_package.search([('product_id', '=', product.id), ('picking_id', '=', confirmed_picking.ids)])
+                            move.write({'quantity_done': float(received_line['product_qty'])})
+                            move.write({'state': 'done'})
                     confirmed_picking.state = 'done'
                     return True
 

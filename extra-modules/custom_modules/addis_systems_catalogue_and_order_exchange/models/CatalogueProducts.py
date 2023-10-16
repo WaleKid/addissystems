@@ -21,6 +21,7 @@ class AddisSystemsCatalogueProducts(models.Model):
     sequence = fields.Integer('Sequence', default=1, help='Gives the sequence order when displaying a product list')
     description = fields.Html('Description', translate=True)
     type = fields.Selection(selection=[('product', 'Storable'), ('service', 'Service'), ('consu', 'Consumable'), ('event', 'Event Ticket')], compute='_compute_type', store=True, readonly=False)
+    trade_terms = fields.Selection([('blanket', 'Blanket Order'), ('retail', 'Retailing')], required=True, readonly=False)
 
     uom_id = fields.Many2one('uom.uom', 'Unit of Measure', default=_get_default_uom_id, required=True, help="Default unit of measure used for all stock operations.") # Done
 
@@ -36,6 +37,20 @@ class AddisSystemsCatalogueProducts(models.Model):
 
     product_transferred = fields.Boolean(string="Transferred", default=False, readonly=False)
     product_tmpl = fields.Many2one('product.template', string='Product Reference', required=False, readonly=True)
+
+    def action_transfer_to_own_catalogue(self):
+        product_data = {
+            'name': self.name,
+            'detailed_type': self.type,
+            'default_code': self.default_code,
+            'weight': self.weight,
+            'volume': self.volume,
+            'list_price': self.product_price
+        }
+
+        if product := self.env['product.template'].create([product_data]):
+            self.product_transferred = True
+            self.product_tmpl = product.id
 
 
 class AddisSystemsCatalogueProductsVariants(models.Model):

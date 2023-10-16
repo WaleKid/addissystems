@@ -100,6 +100,7 @@
                                         <field name="product_price" readonly="1"/>
                                         <field name="product_transferred" widget="boolean_toggle" readonly="1"/>
                                         <field name="product_tmpl" optional="show" readonly="1"/>
+                                        <button name="action_transfer_to_own_catalogue" type="object" icon="fa-plus" title="Create" attrs="{'invisible': [('product_transferred', '=', True)]}"/>
                                     </tree>
                                 </field>
                             </page>
@@ -118,12 +119,11 @@
             <field name="name">addis_systems_catalogue_and_order_exchange.purchase_order_ref.tree.view</field>
             <field name="model">purchase.order.rfc</field>
             <field name="arch" type="xml">
-                <tree string="Request For Catalogue" decoration-success="purchase_order_count > 0" decoration-info="child_catalogue_count > 0"  decoration-muted="child_catalogue_count == 0" decoration-danger="state == 'canceled'">
+                <tree string="Request For Catalogue" decoration-success="purchase_order_count > 0" decoration-info="child_catalogue_count > 0" decoration-muted="child_catalogue_count == 0" decoration-danger="state == 'canceled'">
                     <field name="name"/>
                     <field name="partner_ids" widget="many2many_tags"/>
                     <field name="requested_date"/>
                     <field name="expire_date"/>
-                    <field name="catalogue_with_price" widget="boolean_toggle" readonly="1"/>
                     <field name="trade_terms"/>
                     <field name="company_id" readonly="1"/>
                     <field name="state" widget="badge" decoration-info="state == 'draft'" decoration-success="state == 'sent'" decoration-warning="state == 'partial'" decoration-danger="state == 'canceled'"/>
@@ -152,7 +152,8 @@
                                                     <field name="partner_ids"/>
                                                 </span>
                                                 <span class="float-end" title="Expected Date" attrs="{'invisible': [('child_catalogue_count', '=', 0)]}">
-                                                    Received: <field name="child_catalogue_count"/>
+                                                    Received:
+                                                    <field name="child_catalogue_count"/>
                                                 </span>
                                             </div>
                                             <div>
@@ -173,7 +174,6 @@
                 </kanban>
             </field>
         </record>
-
 
 
         <record id="addis_systems_rfc_calendar_view" model="ir.ui.view">
@@ -255,8 +255,12 @@
             <field name="view_mode">tree,form,calendar,graph,pivot</field>
             <field name="context">{"search_default_this_month":1}</field>
             <field name="help" type="html">
-                <p class="oe_view_nocontent_create">
-                    There is no Request For Catalogue (RFC) click the "New" Button to add new.
+                <p class="o_view_nocontent_smiling_face">
+                    No request for catalogue (RFC) found. Let's create one!
+                </p>
+                <p>
+                    Requests for catalogue are documents that will be sent to your suppliers to request product catalogue for different types of products you consider buying.
+                    Once an agreement has been reached with the supplier, they will be confirmed and turned into purchase orders.
                 </p>
             </field>
         </record>

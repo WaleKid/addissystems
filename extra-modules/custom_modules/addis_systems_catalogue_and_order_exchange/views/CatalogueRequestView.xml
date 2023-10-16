@@ -70,7 +70,7 @@
                                 </div>
                                 <span>
                                     <strong>Note:</strong>
-                                    Description on other conditions and related descriptions on the trade terms information
+                                    Description on other trade conditions and related descriptions on the terms
                                 </span>
                             </page>
                         </notebook>
@@ -93,7 +93,6 @@
                     <field name="partner_rfc_reference"/>
                     <field name="requested_date" readonly="1"/>
                     <field name="expire_date" readonly="1"/>
-                    <field name="pass_to_prospective_customer" widget="boolean_toggle" readonly="1"/>
                     <field name="trade_terms"/>
                     <field name="state" widget="badge" decoration-muted="state == 'new'" decoration-info="state == 'quoted'" decoration-success="state == 'sent'" decoration-danger="state == 'canceled'"/>
                 </tree>
@@ -203,8 +202,12 @@
             <field name="view_mode">tree,form,calendar,graph,pivot</field>
             <field name="context">{"search_default_this_month":1}</field>
             <field name="help" type="html">
-                <p class="oe_view_nocontent_create">
-                    There is no Catalogue Request click New Button to add new.
+                <p class="o_view_nocontent_smiling_face">
+                    No Catalogue Request (CR) found!
+                </p>
+                <p>
+                    Catalogue Request (CR) are documents that is sent from your customers requesting product/services catalogue for different types of products/services you allegedly selling/providing.
+                    Once an agreement has been reached with the potential buyer, they will be confirmed and turned into sales orders.
                 </p>
             </field>
         </record>

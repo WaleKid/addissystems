@@ -225,6 +225,7 @@ def catalogue_consumer_asynch(catalogue_env, client):
                     'name': product["Product_Name"],
                     'catalogue_request_id': request_id.id,
                     'description': '',
+                    'trade_terms': request_id.trade_terms,
                     'type': product["Product_Type"],
                     'uom_id': env['uom.uom'].search([('name', '=', product["Product_UoM"])], limit=1).id,
                     'seller_id': partner_id.id,

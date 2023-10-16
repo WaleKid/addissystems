@@ -30,12 +30,16 @@
                                         <div>
                                             <field name="type" readonly="1"/>
                                         </div>
+                                        <label for="trade_terms" string="Trade with"/>
+                                        <div>
+                                            <field name="trade_terms" readonly="1"/>
+                                        </div>
+                                    </group>
+                                    <group>
                                         <label for="uom_id"/>
                                         <div>
                                             <field name="uom_id" readonly="1"/>
                                         </div>
-                                    </group>
-                                    <group>
                                         <label for="product_price"/>
                                         <div>
                                             <field name="product_price" readonly="1"/>
@@ -48,10 +52,7 @@
                                         <div>
                                             <field name="default_code" readonly="1"/>
                                         </div>
-                                        <label for="type"/>
-                                        <div name="inventory">
-                                            <field name="type" readonly="1"/>
-                                        </div>
+
                                     </group>
                                 </group>
                                 <group name="inventory_info" string="Inventory Information's">

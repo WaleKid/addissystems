@@ -16,7 +16,7 @@ from threading import Thread, enumerate
 
 
 def check_partner_electronic_invoice_user(partner):
-    tenants_list_url = "http://192.168.100.208:8080/admin/v2/tenants"
+    tenants_list_url = "http://192.168.100.209:8080/admin/v2/tenants"
     tenants_list = requests.get(tenants_list_url, timeout=150)
     return str(partner.name).replace(' ', '').lower() in tenants_list.json()
 
@@ -76,6 +76,7 @@ class AddisSystemsStockMoveInherited(models.Model):
         moves_todo._check_company()
         # Split moves where necessary and move quants
         backorder_moves_vals = []
+
         for move in moves_todo:
             # To know whether we need to create a backorder or not, round to the general product's
             # decimal precision and not the product's UOM.
@@ -86,12 +87,13 @@ class AddisSystemsStockMoveInherited(models.Model):
                 new_move_vals = move._split(qty_split)
                 backorder_moves_vals += new_move_vals
         backorder_moves = self.env['stock.move'].create(backorder_moves_vals)
+
         # The backorder moves are not yet in their own picking. We do not want to check entire packs for those
         # ones as it could messed up the result_package_id of the moves being currently validated
         backorder_moves.with_context(bypass_entire_pack=True)._action_confirm(merge=False)
         if cancel_backorder:
             backorder_moves.with_context(moves_todo=moves_todo)._action_cancel()
-        moves_todo.mapped('move_line_ids').sorted()._action_done()
+        # moves_todo.mapped('move_line_ids').sorted()._action_done()
         # Check the consistency of the result packages; there should be an unique location across
         # the contained quants.
         for result_package in moves_todo \
@@ -122,6 +124,7 @@ class AddisSystemsStockMoveInherited(models.Model):
             backorder = picking._create_backorder()
             if any([m.state == 'assigned' for m in backorder.move_ids]):
                 backorder._check_entire_pack()
+        moves_todo.write({'state': 'on_delivery', 'quantity_done': 0})
         return moves_todo
 
 
@@ -164,10 +167,21 @@ class AddisSystemsStockPicking(models.Model):
 
     def confirm_inventory_receipt(self):
         origin = self.env['purchase.order'].search([('name', '=', self.origin)], limit=1)
-        if asyncio.run(producer.dispatch_receipt_confirm_producer(self, origin)):
-            self.state = 'done'
 
-    def _action_on_delivery(self):
+        if all(line.quantity_done == 0 for line in self.move_ids_without_package):
+            raise UserError("Quantity Done is Not set! Please set the quantity done first")
+        purchase_order_id = self.env['purchase.order'].search([('name', '=', self.group_id.name)], limit=1)
+        if purchase_order_id and purchase_order_id.incoterm_id.code in ['DPU', 'DAP', 'DDP'] and asyncio.run(producer.dispatch_receipt_confirm_producer(self, origin)):
+            for moves in self.env['stock.move'].search([('picking_id', '=', self.id)]):
+                moves.write({'state': 'done'})
+        else:
+            for moves in self.env['stock.move'].search([('picking_id', '=', self.id)]):
+                moves.write({'state': 'done'})
+
+        self.state = 'done'
+            
+
+    def _picking_action_on_delivery(self):
         """Call `_action_on_delivery` on the `stock.move` of the `stock.picking` in `self`.
         This method makes sure every `stock.move.line` is linked to a `stock.move` by either
         linking them to an existing one or a newly created one.
@@ -219,6 +233,7 @@ class AddisSystemsStockPicking(models.Model):
             )
         pickings_to_backorder = self - pickings_not_to_backorder
         sales_order_id = self.env['sale.order'].search([('name', '=', self.group_id.name)], limit=1)
+        purchase_order_id = self.env['purchase.order'].search([('name', '=', self.group_id.name)], limit=1)
         if sales_order_id and self.picking_type_id.code == "outgoing":  # AND STATE NOT ON DELIVERY
             dispatch_state = self._dispatch_advice_send_to_buyer()
 
@@ -249,8 +264,8 @@ class AddisSystemsStockPicking(models.Model):
                             return action
                 return True
             elif sales_order_id.incoterm.code in ['DPU', 'DAP', 'DDP'] and self.is_advice_sent:
-                pickings_not_to_backorder.with_context(cancel_backorder=True)._action_on_delivery()
-                pickings_to_backorder.with_context(cancel_backorder=False)._action_on_delivery()
+                pickings_not_to_backorder.with_context(cancel_backorder=True)._picking_action_on_delivery()
+                pickings_to_backorder.with_context(cancel_backorder=False)._picking_action_on_delivery()
 
                 if self.user_has_groups('stock.group_reception_report'):
                     pickings_show_report = self.filtered(lambda p: p.picking_type_id.auto_show_reception_report)
@@ -272,6 +287,29 @@ class AddisSystemsStockPicking(models.Model):
             else:
                 pickings_not_to_backorder.with_context(cancel_backorder=True)._action_done()
                 pickings_to_backorder.with_context(cancel_backorder=False)._action_done()
+
+                if self.user_has_groups('stock.group_reception_report'):
+                    pickings_show_report = self.filtered(lambda p: p.picking_type_id.auto_show_reception_report)
+                    lines = pickings_show_report.move_ids.filtered(lambda m: m.product_id.type == 'product' and m.state != 'cancel' and m.quantity_done and not m.move_dest_ids)
+                    if lines:
+                        # don't show reception report if all already assigned/nothing to assign
+                        wh_location_ids = self.env['stock.location']._search([('id', 'child_of', pickings_show_report.picking_type_id.warehouse_id.view_location_id.ids), ('usage', '!=', 'supplier')])
+                        if self.env['stock.move'].search([
+                            ('state', 'in', ['confirmed', 'partially_available', 'waiting', 'assigned']),
+                            ('product_qty', '>', 0),
+                            ('location_id', 'in', wh_location_ids),
+                            ('move_orig_ids', '=', False),
+                            ('picking_id', 'not in', pickings_show_report.ids),
+                            ('product_id', 'in', lines.product_id.ids)], limit=1):
+                            action = pickings_show_report.action_view_reception_report()
+                            action['context'] = {'default_picking_ids': pickings_show_report.ids}
+                            return action
+                return True
+        elif purchase_order_id and self.picking_type_id.code == "incoming":
+            is_electronic = check_partner_electronic_invoice_user(self.partner_id)
+            if is_electronic and purchase_order_id.partner_e_invoicing:
+                pickings_not_to_backorder.with_context(cancel_backorder=True)._picking_action_on_delivery()
+                pickings_to_backorder.with_context(cancel_backorder=False)._picking_action_on_delivery()
 
                 if self.user_has_groups('stock.group_reception_report'):
                     pickings_show_report = self.filtered(lambda p: p.picking_type_id.auto_show_reception_report)

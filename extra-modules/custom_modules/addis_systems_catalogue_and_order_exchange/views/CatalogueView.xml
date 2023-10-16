@@ -92,9 +92,13 @@
             <field name="name">addis_systems_catalogue_and_order_exchange.purchase_order_catalogue.tree.view</field>
             <field name="model">purchase.order.catalogue</field>
             <field name="arch" type="xml">
-                <tree string="Catalogue">
+                <tree string="Catalogue" decoration-info="count_product_transfer > 0 and child_quotation_count == 0 and child_blanket_count == 0" decoration-success="child_quotation_count > 0 or child_blanket_count > 0" decoration-muted="count_product_transfer == 0">
                     <field name="name"/>
+                    <field name="count_product_transfer" invisible="1"/>
+                    <field name="child_quotation_count" invisible="1"/>
+                    <field name="child_blanket_count" invisible="1"/>
                     <field name="partner_id"/>
+                    <field name="incoterm_id" readonly="1"/>
                     <field name="pass_to_prospective_customer" widget="boolean_toggle"/>
                 </tree>
             </field>

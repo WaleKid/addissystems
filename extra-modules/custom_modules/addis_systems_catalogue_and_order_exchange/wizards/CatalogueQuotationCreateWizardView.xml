@@ -7,8 +7,8 @@
             <field name="model">sale.order.catalogue_request.quot_wizard</field>
             <field name="arch" type="xml">
                 <form string="Catalogue Quotation Create">
-                    <span attrs="{'invisible': [('trade_terms', '!=', 'retail')]}"><strong style="color:red">NOTE: </strong>You are about to create a <strong style="color:blue">Retail Catalogue!!</strong>, please double-check the information provided before sending it to the partner</span>
-                    <span attrs="{'invisible': [('trade_terms', '!=', 'blanket')]}"><strong style="color:red">NOTE: </strong>You are about to create a <strong style="color:blue">Blanket Order Catalogue!!</strong>, please double-check the information provided before sending it to the partner</span>
+                    <span style="margin-left: 11%;" attrs="{'invisible': [('trade_terms', '!=', 'retail')]}"><strong style="color:red">NOTE: </strong>You are about to create a <strong style="color:blue">Retail Catalogue!!</strong>, please double-check the information provided before sending it to the partner</span>
+                    <span style="margin-left: 11%;" attrs="{'invisible': [('trade_terms', '!=', 'blanket')]}"><strong style="color:red">NOTE: </strong>You are about to create a <strong style="color:blue">Blanket Order Catalogue!!</strong>, please double-check the information provided before sending it to the partner</span>
                     <sheet>
                         <div class="oe_title">
                             <label for="catalogue_request"/>
