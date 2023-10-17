@@ -4,14 +4,8 @@ from . import models, controllers
 
 def _pre_init_hook(cr):
     env = api.Environment(cr, SUPERUSER_ID, {})
-    dashboard = env["ir.module.module"].sudo().search([("name", "=", "board")])
-    dashboard.button_install()
-    inventory = env["ir.module.module"].sudo().search([("name", "=", "stock")])
-    inventory.button_install()
-    sales = env["ir.module.module"].sudo().search([("name", "=", "sale_management")])
-    sales.button_install()
-    purchase = env["ir.module.module"].sudo().search([("name", "=", "purchase")])
-    purchase.button_install()
+
+    env.company.external_report_layout_id = env.ref('addis_systems_theme.addis_systems_report').id
 
 
 def _post_init_hook(cr, registry):

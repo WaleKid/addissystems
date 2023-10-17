@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="group_sale_guest" model="res.groups">
+            <field name="name">Guest: All Documents (Read Only)</field>
+            <field name="category_id" ref="base.module_category_sales_sales"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+            <field name="comment">the user will have access to read data in the sales application.</field>
+        </record>
+
+        <record id="sales_team.group_sale_salesman" model="res.groups">
+            <field name="name">Sales: Own Documents</field>
+            <field name="implied_ids" eval="[(4, ref('addis_systems_base.group_sale_guest'))]"/>
+        </record>
+
+        <record id="group_sale_user_team_document" model="res.groups">
+            <field name="name">Sales: Team Documents</field>
+            <field name="category_id" ref="base.module_category_sales_sales"/>
+            <field name="implied_ids" eval="[(4, ref('sales_team.group_sale_salesman'))]"/>
+            <field name="comment">the user will have access to read data in the sales application.</field>
+        </record>
+
+        <record id="sales_team.group_sale_salesman_all_leads" model="res.groups">
+            <field name="name">Sales: All Documents</field>
+            <field name="implied_ids" eval="[(4, ref('addis_systems_base.group_sale_user_team_document'))]"/>
+        </record>
+
+        <record id="group_sale_manager_two" model="res.groups">
+            <field name="name">Sales: Manager</field>
+            <field name="category_id" ref="base.module_category_sales_sales"/>
+            <field name="implied_ids" eval="[(4, ref('sales_team.group_sale_salesman_all_leads'))]"/>
+            <field name="comment">the user will have access to read data in the sales application.</field>
+        </record>
+
+        <record id="sales_team.group_sale_manager" model="res.groups">
+            <field name="name">Administrator: Addis Systems</field>
+            <field name="implied_ids" eval="[(4, ref('addis_systems_base.group_sale_manager_two'))]"/>
+        </record>
+
+    </data>
+</odoo>

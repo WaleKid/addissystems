@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="group_stock_guest" model="res.groups">
+            <field name="name">Guest: All Documents (Read Only)</field>
+            <field name="category_id" ref="base.module_category_inventory_inventory"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <record id="stock.group_stock_user" model="res.groups">
+            <field name="name">Inventory: Clerk</field>
+            <field name="implied_ids" eval="[(3, ref('base.group_user')), (4, ref('addis_systems_base.group_stock_guest'))]"/>
+        </record>
+
+        <record id="group_stock_validator" model="res.groups">
+            <field name="name">Inventory: Supervisor</field>
+            <field name="category_id" ref="base.module_category_inventory_inventory"/>
+            <field name="implied_ids" eval="[(4, ref('stock.group_stock_user'))]"/>
+        </record>
+
+        <record id="group_stock_manager_two" model="res.groups">
+            <field name="name">Inventory: Manager</field>
+            <field name="category_id" ref="base.module_category_inventory_inventory"/>
+            <field name="implied_ids" eval="[(4, ref('addis_systems_base.group_stock_validator'))]"/>
+        </record>
+
+        <record id="stock.group_stock_manager" model="res.groups">
+            <field name="name">Administrator: Addis Systems</field>
+            <field name="implied_ids" eval="[(3, ref('stock.group_stock_user')), (4, ref('addis_systems_base.group_stock_manager_two'))]"/>
+        </record>
+
+    </data>
+</odoo>

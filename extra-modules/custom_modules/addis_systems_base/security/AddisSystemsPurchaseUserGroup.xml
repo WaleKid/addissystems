@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="group_purchase_guest" model="res.groups">
+            <field name="name">Guest: All Documents (Read Only)</field>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+            <field name="category_id" ref="base.module_category_inventory_purchase"/>
+        </record>
+
+        <record id="purchase.group_purchase_user" model="res.groups">
+            <field name="name">Purchaser: Own Documents</field>
+            <field name="implied_ids" eval="[(3, ref('base.group_user')), (4, ref('addis_systems_base.group_purchase_guest'))]"/>
+        </record>
+
+        <record id="group_purchase_validator" model="res.groups">
+            <field name="name">Purchaser: Supervisor</field>
+            <field name="implied_ids" eval="[(4, ref('purchase.group_purchase_user'))]"/>
+            <field name="category_id" ref="base.module_category_inventory_purchase"/>
+        </record>
+
+        <record id="group_purchase_manager_two" model="res.groups">
+            <field name="name">Purchaser: Manager</field>
+            <field name="implied_ids" eval="[(4, ref('addis_systems_base.group_purchase_validator'))]"/>
+            <field name="category_id" ref="base.module_category_inventory_purchase"/>
+        </record>
+
+        <record id="purchase.group_purchase_manager" model="res.groups">
+            <field name="name">Administrator: Addis Systems</field>
+            <field name="implied_ids" eval="[(3, ref('purchase.group_purchase_user')), (4, ref('addis_systems_base.group_purchase_manager_two'))]"/>
+        </record>
+
+    </data>
+</odoo>
