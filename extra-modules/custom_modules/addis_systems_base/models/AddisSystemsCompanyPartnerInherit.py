@@ -133,21 +133,19 @@ class AddisSystemsCompanyInherited(models.Model):
     def create(self, vals_list):
         for vals in vals_list:
             action_create = super(AddisSystemsCompanyInherited, self).create(vals)
-            if not action_create.vat or action_create.company_type != "company":
-                return action_create
+            if len(action_create.vat) not in {13, 10}:
+                raise UserError(_("Standard Ethiopian Tin Number should be 10 or 13 digits in length"))
             if not action_create.vat.isdigit():
                 raise UserError(_("Standard Ethiopian Tin Number can only contain Numerical values"))
             else:
-                raise UserError(_("Standard Ethiopian Tin Number should be 10 or 13 digits in length"))
+                return action_create
 
     def write(self, values):
         action_write = super(AddisSystemsCompanyInherited, self).write(values)
-        if not values.get("vat") or values.get("company_type") != "company":
-            return action_write
-        if not values.get("vat").isdigit():
-            raise UserError(_("Standard Ethiopian Tin Number can only contain Numerical values"))
-        elif len(values.get("vat")) not in [13, 10]:
+        if values.get("vat") and len(values.get("vat")) not in {13, 10}:
             raise UserError(_("Standard Ethiopian Tin Number should be 10 or 13 digits in length"))
+        if values.get("vat") and not values.get("vat").isdigit():
+            raise UserError(_("Standard Ethiopian Tin Number can only contain Numerical values"))
         else:
             return action_write
 
