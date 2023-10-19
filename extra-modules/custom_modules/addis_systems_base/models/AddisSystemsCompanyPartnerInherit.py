@@ -33,6 +33,15 @@ class ResUsersLog(models.Model):
 class ResUsers(models.Model):
     _inherit = "res.users"
 
+    notification_type = fields.Selection([
+        ('email', 'Handle by Emails'),
+        ('inbox', 'Handle in System')],
+        'Notification', required=True, default='email',
+        compute='_compute_notification_type', store=True, readonly=False,
+        help="Policy on how to handle Chatter notifications:\n"
+             "- Handle by Emails: notifications are sent to your email address\n"
+             "- Handle in System: notifications appear in your System Inbox")
+
     latitude = fields.Char(related="log_ids.latitude", string="Latitude", readonly=True)
     longitude = fields.Char(related="log_ids.longitude", string="Longitude", readonly=True)
 
@@ -116,11 +125,11 @@ class AddisSystemsCompanyInherited(models.Model):
     trade_name = fields.Char(string="Trade Name ", readonly=False, required=True, default=lambda self: self.env.company.name)
 
     def addis_system_connection_init(self):
-        tenants_list_url = "http://192.168.100.38:8080/admin/v2/tenants"
+        tenants_list_url = "http://192.168.100.209:8080/admin/v2/tenants"
         tenants_list = requests.get(tenants_list_url, timeout=100)
         if str(self.env.company.name).replace(" ", "").lower() in tenants_list.json():
-            invoice_client = pulsar.Client("pulsar://192.168.100.38:6650")
-            sales_client = pulsar.Client("pulsar://192.168.100.38:6650")
+            invoice_client = pulsar.Client("pulsar://192.168.100.209:6650")
+            sales_client = pulsar.Client("pulsar://192.168.100.209:6650")
             client_dict = {"invoice_client": invoice_client, "sales_client": sales_client}
             print("------------------------------------------------------------------------------------------------------------------------------------------------")
             print("                                     Addis Systems Consumer Service has started for company", self.env.company.name, )

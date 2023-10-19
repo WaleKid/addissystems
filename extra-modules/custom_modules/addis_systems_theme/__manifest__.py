@@ -31,7 +31,7 @@
             "addis_systems_theme/static/src/mixins.scss",
         ],
         "web.assets_backend": [
-            "addis_systems_base/static/src/webclient/user_menu/user_menu_items.js",
+            "addis_systems_theme/static/src/webclient/user_menu/user_menu_items.js",
             "addis_systems_theme/static/src/js/tax_totals.js",
             "addis_systems_theme/static/src/js/web_window_title.js",
             "addis_systems_theme/static/src/xml/tax_totals.xml",

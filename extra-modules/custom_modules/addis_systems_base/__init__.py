@@ -1,5 +1,5 @@
 from odoo import api, SUPERUSER_ID
-from . import models, controllers
+from . import models
 
 
 def _pre_init_hook(cr):
