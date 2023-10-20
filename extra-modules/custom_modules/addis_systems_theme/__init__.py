@@ -16,6 +16,8 @@ def _post_init_hook(cr, registry):
     sales.button_install()
     purchase = env["ir.module.module"].sudo().search([("name", "=", "purchase")])
     purchase.button_install()
+    ethiopia_account = env["ir.module.module"].sudo().search([("name", "=", "l10n_et")])
+    ethiopia_account.button_install()
     accounting = env["ir.module.module"].sudo().search([("name", "=", "om_account_accountant")])
     accounting.button_install()
 

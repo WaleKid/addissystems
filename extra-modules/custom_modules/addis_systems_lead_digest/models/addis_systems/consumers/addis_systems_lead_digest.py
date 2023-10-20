@@ -60,7 +60,7 @@ def account_and_part_decoder(buyer_id):
 def addis_systems_lead_pulsar_waiter(as_lead_env):
     lead_client = consumer = None
     try:
-        lead_client = pulsar.Client("pulsar://192.168.100.209:6650")
+        lead_client = pulsar.Client("pulsar://127.0.0.1:6650")
     except Exception as e:
         raise UserError("Connection to Addis Systems could not be achieved. please try later!") from e
     finally:
