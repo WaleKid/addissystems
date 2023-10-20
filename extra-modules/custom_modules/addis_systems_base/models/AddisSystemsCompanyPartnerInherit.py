@@ -125,11 +125,11 @@ class AddisSystemsCompanyInherited(models.Model):
     trade_name = fields.Char(string="Trade Name ", readonly=False, required=True, default=lambda self: self.env.company.name)
 
     def addis_system_connection_init(self):
-        tenants_list_url = "http://127.0.0.1:8080/admin/v2/tenants"
+        tenants_list_url = "http://192.168.100.209:8080/admin/v2/tenants"
         tenants_list = requests.get(tenants_list_url, timeout=100)
         if str(self.env.company.name).replace(" ", "").lower() in tenants_list.json():
-            invoice_client = pulsar.Client("pulsar://127.0.0.1:6650")
-            sales_client = pulsar.Client("pulsar://127.0.0.1:6650")
+            invoice_client = pulsar.Client("pulsar://192.168.100.209:6650")
+            sales_client = pulsar.Client("pulsar://192.168.100.209:6650")
             client_dict = {"invoice_client": invoice_client, "sales_client": sales_client}
             print("------------------------------------------------------------------------------------------------------------------------------------------------")
             print("                                     Addis Systems Consumer Service has started for company", self.env.company.name, )
