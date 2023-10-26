@@ -16,7 +16,7 @@ from threading import Thread, enumerate
 
 
 def check_partner_electronic_invoice_user(partner):
-    tenants_list_url = "http://192.168.100.38:8080/admin/v2/tenants"
+    tenants_list_url = "http://192.168.100.209:8080/admin/v2/tenants"
     tenants_list = requests.get(tenants_list_url, timeout=150)
     return str(partner.name).replace(' ', '').lower() in tenants_list.json()
 
@@ -28,11 +28,13 @@ class AddisBaseStockExchangeInherited(models.Model):
     _inherit = 'res.company'
 
     def addis_system_connection_init(self):
-        super(AddisBaseStockExchangeInherited, self).addis_system_connection_init()
-        # Stock Receipt Consumer Caller
-        self.env['stock.picking'].addis_systems_inventory_receipt_digest()
-        # Stock Delivery Confirmation Consumer Caller
-        self.env['stock.picking'].addis_systems_inventory_delivery_confirmations_digest()
+        root = super(AddisBaseStockExchangeInherited, self).addis_system_connection_init()
+        if root and root["sales_client"]:
+            client = root["sales_client"]
+            # Stock Receipt Consumer Caller
+            self.env['stock.picking'].addis_systems_inventory_receipt_digest(client)
+            # Stock Delivery Confirmation Consumer Caller
+            self.env['stock.picking'].addis_systems_inventory_delivery_confirmations_digest(client)
 
 
 class AddisSystemsStockMoveInherited(models.Model):
@@ -350,25 +352,25 @@ class AddisSystemsStockPicking(models.Model):
                         return action
             return True
 
-    def addis_systems_inventory_receipt_digest(self):
+    def addis_systems_inventory_receipt_digest(self, client):
         all_active_thread_names = [thread.name for thread in enumerate()]
 
         stock_receipt_thread_name = 'addis_systems_stock_transfer_receipt_listener'
         if stock_receipt_thread_name not in all_active_thread_names:
             _logger.info('Starting Thread %s for company: %s', stock_receipt_thread_name, self.env.company.name)
-            stock_receipt_message_waiter_thread = Thread(target=consumer.stock_receipt_consumer_asynch, args=(self, stock_receipt_thread_name), name=stock_receipt_thread_name)
+            stock_receipt_message_waiter_thread = Thread(target=consumer.stock_receipt_consumer_asynch, args=(self, client), name=stock_receipt_thread_name)
             stock_receipt_message_waiter_thread.daemon = True
             stock_receipt_message_waiter_thread.start()
         else:
             _logger.info('Skipping Thread %s for company: %s', stock_receipt_thread_name, self.env.company.name)
 
-    def addis_systems_inventory_delivery_confirmations_digest(self):
+    def addis_systems_inventory_delivery_confirmations_digest(self, client):
         all_active_thread_names = [thread.name for thread in enumerate()]
 
         stock_delivery_confirmation_thread_name = 'addis_systems_stock_transfer_delivery_confirmation_listener'
         if stock_delivery_confirmation_thread_name not in all_active_thread_names:
             _logger.info('Starting Thread %s for company: %s', stock_delivery_confirmation_thread_name, self.env.company.name)
-            stock_delivery_confirmation_message_waiter_thread = Thread(target=consumer.stock_delivery_confirmation_consumer_asynch, args=(self, stock_delivery_confirmation_thread_name), name=stock_delivery_confirmation_thread_name)
+            stock_delivery_confirmation_message_waiter_thread = Thread(target=consumer.stock_delivery_confirmation_consumer_asynch, args=(self, client), name=stock_delivery_confirmation_thread_name)
             stock_delivery_confirmation_message_waiter_thread.daemon = True
             stock_delivery_confirmation_message_waiter_thread.start()
         else:

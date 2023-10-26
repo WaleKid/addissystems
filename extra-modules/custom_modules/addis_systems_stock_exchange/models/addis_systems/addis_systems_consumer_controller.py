@@ -16,22 +16,20 @@ from ..avro_schema import dispatch_schema
 _logger = logging.getLogger(__name__)
 
 
-def stock_receipt_consumer_asynch(stock_env, thread_name):
+def stock_receipt_consumer_asynch(stock_environment, client):
     dispatch_avro = dispatch_schema.dispatch_avro
     schema = avro.schema.parse(json.dumps(dispatch_avro))
 
     def stock_receipt_pulsar_waiter(stock_env):
         consumer = None
 
-        client = pulsar.Client("pulsar://192.168.100.38:6650")
-        topic_name = "persistent://" + stock_env.env.company.name.replace(' ', '').lower() + "/orders/receipt"
-        consumer_configuration = {"subscription_name": str(stock_env.env.company.name).replace(' ', '').lower()}
         try:
+            topic_name = "persistent://" + stock_env.env.company.name.replace(' ', '').lower() + "/orders/receipt"
+            consumer_configuration = {"subscription_name": str(stock_env.env.company.name).replace(' ', '').lower()}
             consumer = client.subscribe(topic_name, **consumer_configuration)
         except Exception as e:
             consumer = None
             _logger.warning("Addis Systems topic subscription couldn't be achieved", e)
-
         finally:
             if consumer:
                 while True:
@@ -39,7 +37,8 @@ def stock_receipt_consumer_asynch(stock_env, thread_name):
                         bytes_writer = io.BytesIO(msg.data())
                         decoder = avro.io.BinaryDecoder(bytes_writer)
                         datum_reader = avro.io.DatumReader(schema)
-                        result = datum_reader.read(decoder)
+                        dump = json.dumps(datum_reader.read(decoder))
+                        result = json.loads(dump)
 
                         if result and stock_receipt_create(stock_env, result):
                             consumer.acknowledge(msg)
@@ -54,19 +53,29 @@ def stock_receipt_consumer_asynch(stock_env, thread_name):
 
         with stock_env.env.registry.cursor() as new_cr:
             env = api.Environment(new_cr, SUPERUSER_ID, {})
-            partner_id = env['res.partner'].search(['|', ('name', '=', seller_info['company_name']), ('vat', '=', seller_info['tin_no'])], limit=1)
-            if purchase_order_id := env['purchase.order'].search([('name', '=', stock_receipt_reference["Buyer_ref_no"]), ('partner_id', '=', partner_id.id), ('state', 'in', ['purchase', 'done'])], limit=1):
-                count_pickings = env['stock.picking'].search_count([('origin', '=', purchase_order_id.name), ('partner_id', '=', partner_id.id), ])
+            partner_id = env['res.partner'].search(
+                ['|', ('name', '=', seller_info['company_name']), ('vat', '=', seller_info['tin_no'])], limit=1)
+            if purchase_order_id := env['purchase.order'].search(
+                    [('name', '=', stock_receipt_reference["Buyer_ref_no"]), ('partner_id', '=', partner_id.id),
+                     ('state', 'in', ['purchase', 'done'])], limit=1):
+                count_pickings = env['stock.picking'].search_count(
+                    [('origin', '=', purchase_order_id.name), ('partner_id', '=', partner_id.id), ])
                 purchase_order_id.partner_ref = stock_receipt_reference["Seller_order_ref_no"]
-                if purchase_default_picking := env['stock.picking'].search([('origin', '=', purchase_order_id.name), ('partner_id', '=', partner_id.id), ('state', 'in', ['assigned', 'waiting', 'confirmed'])], limit=1):
+                if purchase_default_picking := env['stock.picking'].search(
+                        [('origin', '=', purchase_order_id.name), ('partner_id', '=', partner_id.id),
+                         ('state', 'in', ['assigned', 'waiting', 'confirmed'])], limit=1):
 
                     to_backorder = False
                     purchase_default_picking.dispatch_reference_number = stock_receipt_reference['Disp_advice_ref_no']
 
                     for delivery_line in stock_receipt_line:
-                        product_tmpl_id = env['product.template'].search([('name', '=', delivery_line["product_name"])], limit=1)
-                        product_id = env['product.product'].search([('product_tmpl_id', '=', product_tmpl_id.id)], limit=1)
-                        line = purchase_default_picking.move_ids_without_package.search([('product_id', '=', product_id.id), ('state', 'in', ['assigned', 'waiting', 'confirmed'])], limit=1)
+                        product_tmpl_id = env['product.template'].search([('name', '=', delivery_line["product_name"])],
+                                                                         limit=1)
+                        product_id = env['product.product'].search([('product_tmpl_id', '=', product_tmpl_id.id)],
+                                                                   limit=1)
+                        line = purchase_default_picking.move_ids_without_package.search(
+                            [('product_id', '=', product_id.id), ('state', 'in', ['assigned', 'waiting', 'confirmed'])],
+                            limit=1)
                         if line.product_uom_qty >= float(delivery_line["quantity_done"]):
                             line.quantity_done = float(delivery_line["quantity_done"])
 
@@ -75,7 +84,9 @@ def stock_receipt_consumer_asynch(stock_env, thread_name):
                         if line.product_uom_qty > line.quantity_done:
                             to_backorder = True
 
-                bo_confirm = env['stock.backorder.confirmation'].create({'pick_ids': [purchase_default_picking.id]}).with_context(button_validate_picking_ids=[purchase_default_picking.id])
+                bo_confirm = env['stock.backorder.confirmation'].create(
+                    {'pick_ids': [purchase_default_picking.id]}).with_context(
+                    button_validate_picking_ids=[purchase_default_picking.id])
 
                 if to_backorder:
                     bo_confirm.process()
@@ -87,20 +98,19 @@ def stock_receipt_consumer_asynch(stock_env, thread_name):
                 print("\nPurchase Order Not Validated Yet")
                 return False
 
-    stock_receipt_pulsar_waiter(stock_env)
+    stock_receipt_pulsar_waiter(stock_environment)
 
 
-def stock_delivery_confirmation_consumer_asynch(stock_env, thread_name):
+def stock_delivery_confirmation_consumer_asynch(stock_envvironment, client):
     dispatch_avro = dispatch_schema.dispatch_avro
     schema = avro.schema.parse(json.dumps(dispatch_avro))
 
     def stock_delivery_confirmation_pulsar_waiter(stock_env):
         consumer = None
 
-        client = pulsar.Client("pulsar://192.168.100.38:6650")
-        topic_name = "persistent://" + stock_env.env.company.name.replace(' ', '').lower() + "/orders/delivery"
-        consumer_configuration = {"subscription_name": str(stock_env.env.company.name).replace(' ', '').lower()}
         try:
+            topic_name = "persistent://" + stock_env.env.company.name.replace(' ', '').lower() + "/orders/delivery"
+            consumer_configuration = {"subscription_name": str(stock_env.env.company.name).replace(' ', '').lower()}
             consumer = client.subscribe(topic_name, **consumer_configuration)
         except Exception as e:
             consumer = None
@@ -113,7 +123,8 @@ def stock_delivery_confirmation_consumer_asynch(stock_env, thread_name):
                         bytes_writer = io.BytesIO(msg.data())
                         decoder = avro.io.BinaryDecoder(bytes_writer)
                         datum_reader = avro.io.DatumReader(schema)
-                        result = datum_reader.read(decoder)
+                        dump = json.dumps(datum_reader.read(decoder))
+                        result = json.loads(dump)
 
                         if result and stock_delivery_confirm_create(stock_env, result):
                             consumer.acknowledge(msg)
@@ -128,18 +139,26 @@ def stock_delivery_confirmation_consumer_asynch(stock_env, thread_name):
 
         with stock_env.env.registry.cursor() as new_cr:
             env = api.Environment(new_cr, SUPERUSER_ID, {})
-            partner_id = env['res.partner'].search(['|', ('name', '=', seller_info['company_name']), ('vat', '=', seller_info['tin_no'])], limit=1)
+            partner_id = env['res.partner'].search(
+                ['|', ('name', '=', seller_info['company_name']), ('vat', '=', seller_info['tin_no'])], limit=1)
 
-            if sales_order_id := env['sale.order'].search([('client_order_ref', '=', stock_receipt_reference["Seller_order_ref_no"]), ('partner_id', '=', partner_id.id), ('state', 'in', ['sale', 'done'])], limit=1):
-                count_pickings = env['stock.picking'].search_count([('origin', '=', sales_order_id.name), ('partner_id', '=', partner_id.id), ])
-                if confirmed_picking := env['stock.picking'].search([('dispatch_reference_number', '=', stock_receipt_reference['Disp_advice_ref_no']), ('origin', '=', sales_order_id.name), ('partner_id', '=', partner_id.id), ('state', 'in', ['on_delivery'])], limit=1):
+            if sales_order_id := env['sale.order'].search(
+                    [('client_order_ref', '=', stock_receipt_reference["Seller_order_ref_no"]),
+                     ('partner_id', '=', partner_id.id), ('state', 'in', ['sale', 'done'])], limit=1):
+                count_pickings = env['stock.picking'].search_count(
+                    [('origin', '=', sales_order_id.name), ('partner_id', '=', partner_id.id), ])
+                if confirmed_picking := env['stock.picking'].search(
+                        [('dispatch_reference_number', '=', stock_receipt_reference['Disp_advice_ref_no']),
+                         ('origin', '=', sales_order_id.name), ('partner_id', '=', partner_id.id),
+                         ('state', 'in', ['on_delivery'])], limit=1):
                     for received_line in stock_receipt_line:
                         product_tmpl_id = env['product.template'].search([('name', '=', received_line['product_name'])])
                         for product in env['product.product'].search([('product_tmpl_id', 'in', product_tmpl_id.ids)]):
-                            move = confirmed_picking.move_ids_without_package.search([('product_id', '=', product.id), ('picking_id', '=', confirmed_picking.ids)])
+                            move = confirmed_picking.move_ids_without_package.search(
+                                [('product_id', '=', product.id), ('picking_id', '=', confirmed_picking.ids)])
                             move.write({'quantity_done': float(received_line['product_qty'])})
                             move.write({'state': 'done'})
                     confirmed_picking.state = 'done'
                     return True
 
-    stock_delivery_confirmation_pulsar_waiter(stock_env)
+    stock_delivery_confirmation_pulsar_waiter(stock_envvironment)
