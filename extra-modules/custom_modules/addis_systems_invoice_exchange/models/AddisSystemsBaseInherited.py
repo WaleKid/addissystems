@@ -13,3 +13,6 @@ class AddisBaseInvoiceExchangeInherited(models.Model):
             invoice.addis_system_vendor_bill_consumer(client)
             # Credit Note Consumer Called
             invoice.addis_system_credit_note_consumer(client)
+            return root
+        else:
+            return

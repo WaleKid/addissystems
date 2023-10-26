@@ -16,6 +16,7 @@ class AddisBaseSalesPurchaseExchangeInherited(models.Model):
             self.env['sale.order'].addis_systems_sales_order_digest(client)
             # Catalogue Quotation Consumer Called
             self.env['purchase.order'].addis_systems_catalogue_quotation_digest(client)
+            return root
         else:
             return
 

@@ -20,7 +20,7 @@ _logger = logging.getLogger(__name__)
 
 
 async def check_partner_electronic_invoice_user(partner):
-    tenants_list_url = "http://192.168.100.209:8080/admin/v2/tenants"
+    tenants_list_url = "http://192.168.100.38:8080/admin/v2/tenants"
     tenants_list = requests.get(tenants_list_url, timeout=150)
     return str(partner.name).replace(" ", "").lower() in tenants_list.json()
 
@@ -143,7 +143,7 @@ async def invoice_producer(invoice_id):
     }
 
     try:
-        client = pulsar.Client("pulsar://192.168.100.209:6650")
+        client = pulsar.Client("pulsar://192.168.100.38:6650")
     except Exception as e:
         raise UserError(
             "Connection to Addis Systems could not be achieved. please try later!"
@@ -321,7 +321,7 @@ async def invoice_log_tracking_producer_consume(invoice_id):
     log_producer = None
     client = None
     try:
-        client = pulsar.Client("pulsar://192.168.100.209:6650")
+        client = pulsar.Client("pulsar://192.168.100.38:6650")
     except Exception as e:
         raise UserError(
             "Connection to Addis Systems could not be achieved. please try later!"
@@ -491,7 +491,7 @@ async def refund_producer(refund_id):
     }
 
     try:
-        client = pulsar.Client("pulsar://192.168.100.209:6650")
+        client = pulsar.Client("pulsar://192.168.100.38:6650")
     except Exception as e:
         raise UserError(
             "Connection to Addis Systems could not be achieved. please try later!"
@@ -664,7 +664,7 @@ async def refund_log_tracking_producer_consume(refund_id):
     log_producer = None
     client = None
     try:
-        client = pulsar.Client("pulsar://192.168.100.209:6650")
+        client = pulsar.Client("pulsar://192.168.100.38:6650")
     except Exception as e:
         raise UserError(
             "Connection to Addis Systems could not be achieved. please try later!"
